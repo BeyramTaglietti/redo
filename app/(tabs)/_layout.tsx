@@ -1,6 +1,9 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
 import React from "react";
+import { useColorScheme } from "react-native";
+
+import { tailwindColors } from "@/lib/utils";
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
@@ -10,20 +13,48 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
+  const colorScheme = useColorScheme();
+
   return (
-    <Tabs>
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: tailwindColors.primary.DEFAULT,
+        tabBarInactiveTintColor: tailwindColors.muted,
+        tabBarStyle: {
+          borderTopWidth: 0,
+          elevation: 0,
+          backgroundColor:
+            colorScheme === "light"
+              ? tailwindColors.background.DEFAULT
+              : tailwindColors.background.dark,
+        },
+        headerStyle: {
+          backgroundColor:
+            colorScheme === "light"
+              ? tailwindColors.background.DEFAULT
+              : tailwindColors.background.dark,
+        },
+        headerShadowVisible: false,
+        headerTitleStyle: {
+          color:
+            colorScheme === "light"
+              ? tailwindColors.foreground.DEFAULT
+              : tailwindColors.foreground.dark,
+        },
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: "Tab One",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: "Redos",
+          tabBarIcon: ({ color }) => <TabBarIcon name="check" color={color} />,
         }}
       />
       <Tabs.Screen
         name="two"
         options={{
-          title: "Tab Two",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: "Settings",
+          tabBarIcon: ({ color }) => <TabBarIcon name="gear" color={color} />,
         }}
       />
     </Tabs>
