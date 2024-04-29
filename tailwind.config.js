@@ -22,7 +22,7 @@ module.exports = {
         },
         foreground: { DEFAULT: "#000000", dark: "#FFFFFF" },
         success: "#4CAF50",
-        destructive: "#C74B4B",
+        destructive: "#E01624",
         muted: "#718096",
       },
     },

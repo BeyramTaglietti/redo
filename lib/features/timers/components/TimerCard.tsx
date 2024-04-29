@@ -1,8 +1,14 @@
-import { Feather } from "@expo/vector-icons";
-import { ComponentProps, useCallback, useEffect, useState } from "react";
+import { Entypo } from "@expo/vector-icons";
+import {
+  ComponentProps,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { TouchableOpacity, View } from "react-native";
 
-import { RDText } from "@/lib/components";
+import { Deletable, RDText } from "@/lib/components";
 import { Timer, useTimersStore } from "@/lib/stores/timers";
 import { cn, tailwindColors } from "@/lib/utils";
 
@@ -40,29 +46,34 @@ export const TimerCard = ({ timer }: { timer: Timer }) => {
     postPoneTimer(timer.id);
   }, [postPoneTimer, timer.id]);
 
+  const formattedTimeLeft = useMemo(() => {
+    return formatDurationFromMilliseconds(timeLeft * 1000);
+  }, [timeLeft]);
+
   if (timeLeft === null) {
     return null;
   }
 
   return (
-    <View
-      className={cn(
-        "rounded-xl h-40 w-full p-4",
-        timeLeft > 0 ? "bg-primary" : "bg-muted",
-      )}
-    >
-      <RDText className="text-white font-bold text-xl">{timer.title}</RDText>
-      <RDText className="text-white font-bold text-xl">
-        {timeLeft <= 0 ? 0 : timeLeft}
-      </RDText>
+    <Deletable onDelete={() => deleteTimer(timer.id)}>
       <View
-        className="flex flex-row flex-1 justify-end items-end"
-        style={{ gap: 32 }}
+        className={cn(
+          "rounded-xl h-40 w-full p-4",
+          timeLeft > 0 ? "bg-primary" : "bg-muted",
+        )}
       >
-        <ActionButton iconName="x" onPress={() => deleteTimer(timer.id)} />
-        <ActionButton iconName="check" onPress={handlePostPone} />
+        <RDText className="text-white font-bold text-xl">{timer.title}</RDText>
+        <RDText className="text-white font-bold text-xl">
+          {timeLeft <= 0 ? 0 : formattedTimeLeft}
+        </RDText>
+        <View
+          className="flex flex-row flex-1 justify-end items-end"
+          style={{ gap: 32 }}
+        >
+          <ActionButton iconName="cycle" onPress={handlePostPone} />
+        </View>
       </View>
-    </View>
+    </Deletable>
   );
 };
 
@@ -70,7 +81,7 @@ const ActionButton = ({
   iconName,
   onPress,
 }: {
-  iconName: ComponentProps<typeof Feather>["name"];
+  iconName: ComponentProps<typeof Entypo>["name"];
   onPress: () => void;
 }) => {
   return (
@@ -78,7 +89,7 @@ const ActionButton = ({
       className="rounded-full h-12 w-12 flex justify-center items-center bg-transparent/20"
       onPress={onPress}
     >
-      <Feather
+      <Entypo
         name={iconName}
         size={24}
         color={tailwindColors.primary.foreground}
@@ -86,3 +97,22 @@ const ActionButton = ({
     </TouchableOpacity>
   );
 };
+
+function formatDurationFromMilliseconds(ms: number) {
+  let seconds = Math.floor(ms / 1000);
+  let minutes = Math.floor(seconds / 60);
+  let hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  seconds = seconds % 60;
+  minutes = minutes % 60;
+  hours = hours % 24;
+
+  const parts = [];
+  if (days) parts.push(`${days} days`);
+  if (hours) parts.push(`${hours} hours`);
+  if (minutes) parts.push(`${minutes} minutes`);
+  if (seconds && parts.length < 3) parts.push(`${seconds} seconds`);
+
+  return parts.join(" ");
+}

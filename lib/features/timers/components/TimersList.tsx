@@ -12,7 +12,7 @@ export const TimersList = () => {
   return (
     <View className="flex flex-col w-full h-full" style={{ gap: 16 }}>
       <Link href="/create_timer" asChild>
-        <RDButton title="create new" />
+        <RDButton title="Create" />
       </Link>
 
       <FlatList
