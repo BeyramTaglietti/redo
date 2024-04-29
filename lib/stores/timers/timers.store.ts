@@ -12,7 +12,7 @@ interface Actions {
   createTimer: (timer: Timer) => void;
   editTimer: (timer: Timer) => void;
   deleteTimer: (id: string) => void;
-  postPoneTimer: (id: string) => void;
+  postPoneTimer: (id: string, notificationIdentifier: string) => void;
 }
 
 const initialState: State = {
@@ -35,13 +35,14 @@ export const useTimersStore = create<State & Actions>()(
         set((state) => ({
           timers: state.timers.filter((timer) => timer.id !== id),
         })),
-      postPoneTimer: (id) =>
+      postPoneTimer: (id, notificationIdentifier) =>
         set((state) => ({
           timers: state.timers.map((timer) =>
             timer.id === id
               ? {
                   ...timer,
                   updated_at: new Date().valueOf(),
+                  notification_identifier: notificationIdentifier,
                 }
               : timer,
           ),

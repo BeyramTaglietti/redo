@@ -1,4 +1,5 @@
 import { Entypo } from "@expo/vector-icons";
+import * as Notifications from "expo-notifications";
 import { router } from "expo-router";
 import {
   ComponentProps,
@@ -10,12 +11,23 @@ import {
 import { Pressable, Text, TouchableOpacity, View } from "react-native";
 
 import { Deletable } from "@/lib/components";
+import { usePushNotification } from "@/lib/hooks";
 import { Timer, useTimersStore } from "@/lib/stores/timers";
 import { cn, tailwindColors } from "@/lib/utils";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 
 export const TimerCard = ({ timer }: { timer: Timer }) => {
   const deleteTimer = useTimersStore((state) => state.deleteTimer);
   const postPoneTimer = useTimersStore((state) => state.postPoneTimer);
+
+  const [schedulePushNotification] = usePushNotification();
 
   const calculateSecondsLeft = useCallback(() => {
     return Math.round(
@@ -41,11 +53,44 @@ export const TimerCard = ({ timer }: { timer: Timer }) => {
     return () => {
       clearInterval(interval);
     };
-  }, [calculateSecondsLeft, timer.updated_at]);
+  }, [
+    calculateSecondsLeft,
+    timer.updated_at,
+    timer.id,
+    schedulePushNotification,
+  ]);
 
-  const handlePostPone = useCallback(() => {
-    postPoneTimer(timer.id);
-  }, [postPoneTimer, timer.id]);
+  const cleanNotification = useCallback(async () => {
+    if (timer.notification_identifier) {
+      Notifications.cancelScheduledNotificationAsync(
+        timer.notification_identifier,
+      );
+    }
+  }, [timer.notification_identifier]);
+
+  const handleDelete = useCallback(() => {
+    cleanNotification();
+    deleteTimer(timer.id);
+  }, [cleanNotification, deleteTimer, timer.id]);
+
+  const handlePostPone = useCallback(async () => {
+    cleanNotification();
+
+    const identifier = await schedulePushNotification({
+      title: "Oh no! 🚨",
+      body: `${timer.title} has expired!`,
+      trigger: { seconds: timer.duration_ms / 1000 },
+    });
+
+    postPoneTimer(timer.id, identifier);
+  }, [
+    cleanNotification,
+    postPoneTimer,
+    schedulePushNotification,
+    timer.duration_ms,
+    timer.id,
+    timer.title,
+  ]);
 
   const formattedTimeLeft = useMemo(() => {
     return formatDurationFromMilliseconds(timeLeft * 1000);
@@ -56,7 +101,7 @@ export const TimerCard = ({ timer }: { timer: Timer }) => {
   }
 
   return (
-    <Deletable onDelete={() => deleteTimer(timer.id)}>
+    <Deletable onDelete={handleDelete}>
       <Pressable
         className={cn(
           "rounded-xl h-40 w-full p-4",

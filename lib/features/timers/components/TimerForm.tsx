@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
 import { useCallback } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 
 import { TimerFormSchema, TimerFormValues } from "../validation";
 
@@ -82,74 +82,72 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
   );
 
   return (
-    <View className="flex flex-col h-full w-full relative" style={{ gap: 16 }}>
-      <Controller
-        control={control}
-        name="title"
-        render={({ field: { value, onChange } }) => (
-          <RDTextInput
-            placeholder="Redo's title"
-            value={value}
-            onChangeText={onChange}
-            ref={titleRef}
+    <ScrollView className="h-full">
+      <View className="flex flex-col h-full w-full " style={{ gap: 16 }}>
+        <Controller
+          control={control}
+          name="title"
+          render={({ field: { value, onChange } }) => (
+            <RDTextInput
+              placeholder="Redo's title"
+              value={value}
+              onChangeText={onChange}
+              ref={titleRef}
+            />
+          )}
+        />
+        <View className="flex flex-row" style={{ gap: 8 }}>
+          <Controller
+            control={control}
+            name="days"
+            render={({ field: { value, onChange } }) => (
+              <RDTextInput
+                placeholder="Days"
+                value={value?.toString()}
+                onChangeText={onChange}
+                keyboardType="numeric"
+              />
+            )}
           />
-        )}
-      />
-      <View className="flex flex-row" style={{ gap: 8 }}>
-        <Controller
-          control={control}
-          name="days"
-          render={({ field: { value, onChange } }) => (
-            <RDTextInput
-              placeholder="Days"
-              value={value?.toString()}
-              onChangeText={onChange}
-              keyboardType="numeric"
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="hours"
-          render={({ field: { value, onChange } }) => (
-            <RDTextInput
-              placeholder="Hours"
-              value={value?.toString()}
-              onChangeText={onChange}
-              keyboardType="numeric"
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="minutes"
-          render={({ field: { value, onChange } }) => (
-            <RDTextInput
-              placeholder="Minutes"
-              value={value?.toString()}
-              onChangeText={onChange}
-              keyboardType="numeric"
-            />
-          )}
-        />
-      </View>
-
-      {Object.values(errors).length > 0 && (
-        <View
-          className="flex flex-row items-center justify-start"
-          style={{ gap: 8 }}
-        >
-          <Feather name="info" size={18} color={tailwindColors.destructive} />
-          <Text className="text-destructive">
-            {Object.values(errors)[0].message}
-          </Text>
+          <Controller
+            control={control}
+            name="hours"
+            render={({ field: { value, onChange } }) => (
+              <RDTextInput
+                placeholder="Hours"
+                value={value?.toString()}
+                onChangeText={onChange}
+                keyboardType="numeric"
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="minutes"
+            render={({ field: { value, onChange } }) => (
+              <RDTextInput
+                placeholder="Minutes"
+                value={value?.toString()}
+                onChangeText={onChange}
+                keyboardType="numeric"
+              />
+            )}
+          />
         </View>
-      )}
-      <RDButton
-        title="create"
-        onPress={handleSubmit(handleTimerCreate)}
-        className="absolute bottom-4 left-0"
-      />
-    </View>
+
+        {Object.values(errors).length > 0 && (
+          <View
+            className="flex flex-row items-center justify-start"
+            style={{ gap: 8 }}
+          >
+            <Feather name="info" size={18} color={tailwindColors.destructive} />
+            <Text className="text-destructive">
+              {Object.values(errors)[0].message}
+            </Text>
+          </View>
+        )}
+        <RDButton title="create" onPress={handleSubmit(handleTimerCreate)} />
+      </View>
+    </ScrollView>
   );
 };
