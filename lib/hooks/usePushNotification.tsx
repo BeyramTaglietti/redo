@@ -75,8 +75,6 @@ export const usePushNotification = (): [
 };
 
 async function registerForPushNotificationsAsync() {
-  let token;
-
   if (Platform.OS === "android") {
     await Notifications.setNotificationChannelAsync("default", {
       name: "default",
@@ -103,7 +101,7 @@ async function registerForPushNotificationsAsync() {
   }
   // Learn more about projectId:
   // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
-  token = (
+  const token = (
     await Notifications.getExpoPushTokenAsync({
       projectId: "your-project-id",
     })
