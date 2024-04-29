@@ -10,6 +10,7 @@ interface State {
 
 interface Actions {
   createTimer: (timer: Timer) => void;
+  editTimer: (timer: Timer) => void;
   deleteTimer: (id: string) => void;
   postPoneTimer: (id: string) => void;
 }
@@ -24,6 +25,12 @@ export const useTimersStore = create<State & Actions>()(
       ...initialState,
       createTimer: (newTimer) =>
         set((state) => ({ timers: [...state.timers, newTimer] })),
+      editTimer: (editedTimer) =>
+        set((state) => ({
+          timers: state.timers.map((timer) =>
+            timer.id === editedTimer.id ? editedTimer : timer,
+          ),
+        })),
       deleteTimer: (id) =>
         set((state) => ({
           timers: state.timers.filter((timer) => timer.id !== id),

@@ -1,4 +1,5 @@
 import { Entypo } from "@expo/vector-icons";
+import { router } from "expo-router";
 import {
   ComponentProps,
   useCallback,
@@ -6,9 +7,9 @@ import {
   useMemo,
   useState,
 } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { Pressable, Text, TouchableOpacity, View } from "react-native";
 
-import { Deletable, RDText } from "@/lib/components";
+import { Deletable } from "@/lib/components";
 import { Timer, useTimersStore } from "@/lib/stores/timers";
 import { cn, tailwindColors } from "@/lib/utils";
 
@@ -56,23 +57,26 @@ export const TimerCard = ({ timer }: { timer: Timer }) => {
 
   return (
     <Deletable onDelete={() => deleteTimer(timer.id)}>
-      <View
+      <Pressable
         className={cn(
           "rounded-xl h-40 w-full p-4",
-          timeLeft > 0 ? "bg-primary" : "bg-muted",
+          timeLeft > 0 ? " bg-[#7963C1]" : "bg-[#B10917]",
         )}
+        onPress={() => {
+          router.push(`/${timer.id}`);
+        }}
       >
-        <RDText className="text-white font-bold text-xl">{timer.title}</RDText>
-        <RDText className="text-white font-bold text-xl">
+        <Text className="text-white font-bold text-xl">{timer.title}</Text>
+        <Text className="text-white font-bold text-xl">
           {timeLeft <= 0 ? 0 : formattedTimeLeft}
-        </RDText>
+        </Text>
         <View
           className="flex flex-row flex-1 justify-end items-end"
           style={{ gap: 32 }}
         >
           <ActionButton iconName="cycle" onPress={handlePostPone} />
         </View>
-      </View>
+      </Pressable>
     </Deletable>
   );
 };

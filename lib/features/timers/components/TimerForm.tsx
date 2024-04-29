@@ -1,18 +1,23 @@
 import { Feather } from "@expo/vector-icons";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
 import { useCallback } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Text, View } from "react-native";
 
+import { TimerFormSchema, TimerFormValues } from "../validation";
+
 import { RDButton, RDTextInput } from "@/lib/components";
 import { useVirtualKeyboard } from "@/lib/hooks";
 import { useTimersStore } from "@/lib/stores/timers";
 import { createUUID, tailwindColors } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { TimerFormSchema, TimerFormValues } from "../validation";
 
-export const TimerForm = () => {
+export const TimerForm = ({ timerId }: { timerId?: string }) => {
   const createTimer = useTimersStore((state) => state.createTimer);
+  const editTimer = useTimersStore((state) => state.editTimer);
+  const currentTimer = useTimersStore((state) =>
+    state.timers.find((t) => t.id === timerId),
+  );
 
   const titleRef = useVirtualKeyboard();
 
@@ -24,7 +29,7 @@ export const TimerForm = () => {
   } = useForm<TimerFormValues>({
     resolver: zodResolver(TimerFormSchema),
     defaultValues: {
-      title: "",
+      title: currentTimer?.title || "",
     },
   });
 
@@ -52,6 +57,18 @@ export const TimerForm = () => {
 
       const duration = days_ms + hours_ms + minutes_ms;
 
+      if (timerId) {
+        editTimer({
+          id: timerId,
+          title: data.title,
+          created_at: now,
+          updated_at: now,
+          duration_ms: duration,
+        });
+        router.back();
+        return;
+      }
+
       createTimer({
         id: createUUID(),
         title: data.title,
@@ -61,7 +78,7 @@ export const TimerForm = () => {
       });
       router.back();
     },
-    [createTimer, setError],
+    [createTimer, setError, editTimer, timerId],
   );
 
   return (

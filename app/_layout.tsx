@@ -40,6 +40,26 @@ export default function RootLayout() {
             headerTintColor: colorScheme === "light" ? "black" : "white",
           }}
         />
+        <Stack.Screen
+          name="[timer_id]"
+          options={{
+            presentation: "modal",
+            title: "Create Redo",
+            headerRight: () =>
+              Platform.OS === "ios" && (
+                <Button title="Close" onPress={() => router.back()} />
+              ),
+            headerStyle: {
+              backgroundColor:
+                colorScheme === "light"
+                  ? tailwindColors.sheet.DEFAULT
+                  : tailwindColors.sheet.dark,
+            },
+            headerShown: true,
+            headerShadowVisible: false,
+            headerTintColor: colorScheme === "light" ? "black" : "white",
+          }}
+        />
       </Stack>
     </GestureHandlerRootView>
   );
