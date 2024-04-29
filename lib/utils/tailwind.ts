@@ -14,6 +14,14 @@ export const tailwindColors = {
     DEFAULT: "#F97316",
     foreground: "#FFFFFF",
   },
+  sheet: {
+    DEFAULT: "#FFFFFF",
+    dark: "#1C1C1E",
+  },
+  "sheet-card": {
+    DEFAULT: "#F2F2F8",
+    dark: "#3A3A3C",
+  },
   foreground: { DEFAULT: "#000000", dark: "#FFFFFF" },
   success: "#4CAF50",
   destructive: "#C74B4B",

@@ -1,11 +1,11 @@
 import { View } from "react-native";
 
-import { RDButton } from "@/lib/components";
+import { TimersList } from "@/lib/features/timers";
 
 export default function TabOneScreen() {
   return (
-    <View className="flex flex-col justify-center items-center w-full h-full bg-background dark:bg-background-dark">
-      <RDButton className="w-60" title="my custom button" />
+    <View className="flex p-4 bg-background dark:bg-background-dark">
+      <TimersList />
     </View>
   );
 }

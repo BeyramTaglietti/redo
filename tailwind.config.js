@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./app/**/*.{js,jsx,ts,tsx}", "./lib/components/*.{js,jsx,ts,tsx}"],
+  content: ["./app/**/*.{js,jsx,ts,tsx}", "./lib/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
       colors: {
@@ -12,7 +12,14 @@ module.exports = {
           DEFAULT: "#F97316",
           foreground: "#FFFFFF",
         },
-        secondary: "#F97316",
+        sheet: {
+          DEFAULT: "#FFFFFF",
+          dark: "#1C1C1E",
+        },
+        "sheet-card": {
+          DEFAULT: "#F2F2F8",
+          dark: "#3A3A3C",
+        },
         foreground: { DEFAULT: "#000000", dark: "#FFFFFF" },
         success: "#4CAF50",
         destructive: "#C74B4B",
