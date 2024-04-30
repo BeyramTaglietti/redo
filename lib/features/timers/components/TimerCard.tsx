@@ -8,12 +8,25 @@ import {
   useMemo,
   useState,
 } from "react";
-import { Pressable, Text, TouchableOpacity, View } from "react-native";
+import {
+  GestureResponderEvent,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import { Deletable } from "@/lib/components";
 import { usePushNotification } from "@/lib/hooks";
 import { Timer, useTimersStore } from "@/lib/stores/timers";
-import { cn, tailwindColors } from "@/lib/utils";
+import { HapticVibrate, cn, tailwindColors } from "@/lib/utils";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withClamp,
+  withSpring,
+} from "react-native-reanimated";
+import { TimerCardBackground } from "./TimerCardBackground";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -23,7 +36,15 @@ Notifications.setNotificationHandler({
   }),
 });
 
-export const TimerCard = ({ timer }: { timer: Timer }) => {
+export const TimerCard = ({
+  timer,
+  onLongPress,
+  isActive,
+}: {
+  timer: Timer;
+  onLongPress?: ((event: GestureResponderEvent) => void) | null | undefined;
+  isActive?: boolean;
+}) => {
   const deleteTimer = useTimersStore((state) => state.deleteTimer);
   const postPoneTimer = useTimersStore((state) => state.postPoneTimer);
 
@@ -82,6 +103,10 @@ export const TimerCard = ({ timer }: { timer: Timer }) => {
       trigger: { seconds: timer.duration_ms / 1000 },
     });
 
+    if (!identifier) {
+      return;
+    }
+
     postPoneTimer(timer.id, identifier);
   }, [
     cleanNotification,
@@ -96,33 +121,57 @@ export const TimerCard = ({ timer }: { timer: Timer }) => {
     return formatDurationFromMilliseconds(timeLeft * 1000);
   }, [timeLeft]);
 
+  const marginX = useSharedValue(0);
+
+  const viewStyle = useAnimatedStyle(() => {
+    return {
+      marginHorizontal: marginX.value,
+    };
+  });
+
+  useEffect(() => {
+    if (isActive) {
+      HapticVibrate("Medium");
+      marginX.value = withSpring(32);
+    } else {
+      HapticVibrate("Light");
+      marginX.value = withClamp({ min: 0 }, withSpring(0));
+    }
+  }, [isActive, marginX]);
+
   if (timeLeft === null) {
     return null;
   }
 
   return (
-    <Deletable onDelete={handleDelete}>
-      <Pressable
-        className={cn(
-          "rounded-xl h-40 w-full p-4",
-          timeLeft > 0 ? " bg-[#7963C1]" : "bg-[#B10917]",
-        )}
-        onPress={() => {
-          router.push(`/${timer.id}`);
-        }}
-      >
-        <Text className="text-white font-bold text-xl">{timer.title}</Text>
-        <Text className="text-white font-bold text-xl">
-          {timeLeft <= 0 ? 0 : formattedTimeLeft}
-        </Text>
-        <View
-          className="flex flex-row flex-1 justify-end items-end"
-          style={{ gap: 32 }}
+    <Animated.View className={cn(isActive && "opacity-60")} style={viewStyle}>
+      <Deletable onDelete={handleDelete}>
+        <Pressable
+          className="rounded-xl h-40 w-full relative overflow-hidden"
+          onPress={() => {
+            router.push(`/${timer.id}`);
+          }}
+          onLongPress={onLongPress}
         >
-          <ActionButton iconName="cycle" onPress={handlePostPone} />
-        </View>
-      </Pressable>
-    </Deletable>
+          <TimerCardBackground
+            timeLeft={timeLeft}
+            duration_ms={timer.duration_ms}
+          />
+          <View className="p-4 z-20 w-full h-full">
+            <Text className="text-white font-bold text-xl">{timer.title}</Text>
+            <Text className="text-white font-bold text-xl">
+              {timeLeft <= 0 ? 0 : formattedTimeLeft}
+            </Text>
+            <View
+              className="flex flex-row flex-1 justify-end items-end"
+              style={{ gap: 32 }}
+            >
+              <ActionButton iconName="cycle" onPress={handlePostPone} />
+            </View>
+          </View>
+        </Pressable>
+      </Deletable>
+    </Animated.View>
   );
 };
 
@@ -161,7 +210,7 @@ function formatDurationFromMilliseconds(ms: number) {
   if (days) parts.push(`${days} days`);
   if (hours) parts.push(`${hours} hours`);
   if (minutes) parts.push(`${minutes} minutes`);
-  if (seconds && parts.length < 3) parts.push(`${seconds} seconds`);
+  if (seconds) parts.push(`${seconds} seconds`);
 
-  return parts.join(" ");
+  return parts.splice(0, 2).join(" ");
 }

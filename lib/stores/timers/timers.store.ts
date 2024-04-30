@@ -13,6 +13,7 @@ interface Actions {
   editTimer: (timer: Timer) => void;
   deleteTimer: (id: string) => void;
   postPoneTimer: (id: string, notificationIdentifier: string) => void;
+  reorderTimers: (timers: Timer[]) => void;
 }
 
 const initialState: State = {
@@ -47,9 +48,10 @@ export const useTimersStore = create<State & Actions>()(
               : timer,
           ),
         })),
+      reorderTimers: (timers) => set({ timers }),
     }),
     {
-      name: "app-storage", // name of the item in the storage (must be unique)
+      name: "timers-storage", // name of the item in the storage (must be unique)
 
       storage: createJSONStorage(() => AsyncStorage), // (optional) by default, 'localStorage' is used
     },

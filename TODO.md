@@ -1,4 +1,5 @@
 Features:
 
-- [ ] Reorder Redos
-- [ ] Notifications
+- [x] Reorder Redos
+- [x] Notifications
+- [ ] Multiple colors

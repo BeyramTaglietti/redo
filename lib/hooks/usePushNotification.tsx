@@ -2,6 +2,7 @@ import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Platform } from "react-native";
+import { useSettingsStore } from "../stores/settings";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -19,7 +20,7 @@ type SchedulePostNotification = {
 };
 
 export const usePushNotification = (): [
-  (args: SchedulePostNotification) => Promise<string>,
+  (args: SchedulePostNotification) => Promise<string | undefined>,
   string | undefined,
   Notifications.Notification | undefined,
 ] => {
@@ -29,6 +30,10 @@ export const usePushNotification = (): [
 
   const notificationListener = useRef<Notifications.Subscription>();
   const responseListener = useRef<Notifications.Subscription>();
+
+  const notificationsEnabled = useSettingsStore(
+    (state) => state.notificationsEnabled,
+  );
 
   useEffect(() => {
     (async () => {
@@ -59,6 +64,9 @@ export const usePushNotification = (): [
 
   const schedulePushNotification = useCallback(
     async ({ title, body, data, trigger }: SchedulePostNotification) => {
+      if (!notificationsEnabled) {
+        return;
+      }
       return Notifications.scheduleNotificationAsync({
         content: {
           title,
@@ -68,7 +76,7 @@ export const usePushNotification = (): [
         trigger,
       });
     },
-    [],
+    [notificationsEnabled],
   );
 
   return [schedulePushNotification, expoPushToken, notification];
@@ -85,7 +93,7 @@ async function registerForPushNotificationsAsync() {
   }
 
   if (!Device.isDevice) {
-    alert("Must use physical device for Push Notifications");
+    // alert("Must use physical device for Push Notifications");
     return;
   }
 

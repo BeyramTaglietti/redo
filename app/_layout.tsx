@@ -44,7 +44,7 @@ export default function RootLayout() {
           name="[timer_id]"
           options={{
             presentation: "modal",
-            title: "Create Redo",
+            title: "Edit Redo",
             headerRight: () =>
               Platform.OS === "ios" && (
                 <Button title="Close" onPress={() => router.back()} />

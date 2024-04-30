@@ -1,25 +1,36 @@
 import { Link } from "expo-router";
-import { FlatList, View } from "react-native";
+import { View } from "react-native";
 
 import { TimerCard } from "./TimerCard";
 
 import { RDButton } from "@/lib/components";
 import { useTimersStore } from "@/lib/stores/timers";
+import DraggableFlatList from "react-native-draggable-flatlist";
 
 export const TimersList = () => {
   const timers = useTimersStore((state) => state.timers);
+  const reorderTimers = useTimersStore((state) => state.reorderTimers);
 
   return (
-    <View className="flex flex-col w-full h-full" style={{ gap: 16 }}>
+    <View className="flex flex-col h-full w-full" style={{ gap: 16 }}>
       <Link href="/create_timer" asChild>
         <RDButton title="Create" />
       </Link>
 
-      <FlatList
+      <DraggableFlatList
+        containerStyle={{
+          flex: 1,
+        }}
         data={timers}
-        renderItem={({ item }) => <TimerCard timer={item} />}
+        renderItem={({ item, drag, isActive }) => (
+          <View className="my-2">
+            <TimerCard timer={item} onLongPress={drag} isActive={isActive} />
+          </View>
+        )}
         keyExtractor={(item) => item.id}
-        ItemSeparatorComponent={() => <View className="h-2" />}
+        onDragEnd={({ data }) => {
+          reorderTimers(data);
+        }}
       />
     </View>
   );

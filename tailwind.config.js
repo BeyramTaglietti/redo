@@ -9,7 +9,7 @@ module.exports = {
           dark: "#000000",
         },
         primary: {
-          DEFAULT: "#F97316",
+          DEFAULT: "#21C55E",
           foreground: "#FFFFFF",
         },
         sheet: {
