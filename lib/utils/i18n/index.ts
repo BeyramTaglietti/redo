@@ -3,12 +3,14 @@ import { initReactI18next } from "react-i18next";
 
 import en from "./languages/en.json";
 import es from "./languages/es.json";
+import fr from "./languages/fr.json";
 import it from "./languages/it.json";
 
 enum SupportedLanguages {
   en = "en",
   it = "it",
   es = "es",
+  fr = "fr",
 }
 
 const translations: { [key in SupportedLanguages]: { translation: any } } = {
@@ -20,6 +22,9 @@ const translations: { [key in SupportedLanguages]: { translation: any } } = {
   },
   it: {
     translation: it,
+  },
+  fr: {
+    translation: fr,
   },
 };
 

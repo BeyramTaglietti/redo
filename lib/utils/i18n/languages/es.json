@@ -17,7 +17,7 @@
     "languages": "Idiomas"
   },
   "timers": {
-    "create_timer": "Crear temporizador",
+    "create_timer": "Crear un Redo",
     "redo_title": "Título de Redo",
     "duration_required": "Se requiere duración",
     "notification": {
@@ -40,7 +40,8 @@
     "languages": {
       "en": "Inglés",
       "it": "Italiano",
-      "es": "Español"
+      "es": "Español",
+      "fr": "Francés"
     }
   }
 }
