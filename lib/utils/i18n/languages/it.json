@@ -1,0 +1,46 @@
+{
+  "app": {
+    "create": "Crea",
+
+    "day": "giorno",
+    "day_plural": "giorni",
+    "hour": "ora",
+    "hour_plural": "ore",
+    "minute": "minuto",
+    "minute_plural": "minuti",
+    "second": "secondo",
+    "second_plural": "secondi",
+
+    "close": "Chiudi",
+    "settings": "Impostazioni",
+    "notifications": "Notifiche",
+    "languages": "Lingue"
+  },
+  "timers": {
+    "create_timer": "Crea timer",
+    "redo_title": "Titolo Redo",
+    "duration_required": "La durata è obbligatoria",
+    "notification": {
+      "title": "Oh no! 🚨",
+      "description": "{{title}} è scaduto!"
+    }
+  },
+  "settings": {
+    "notifications_description": "Queste modifiche non avranno effetto sui Redo già in scadenza",
+    "language": "Lingua",
+    "about_redo": "Informazioni su Redo",
+    "about": {
+      "title": "Ciao! 👋",
+      "description": "Grazie per aver usato Redo, spero che l'applicazione si sia rivelata utile come lo è stato per me. Fai attenzione a non pianificare troppo la tua giornata o potresti cadere nella trappola della procrastinazione e avere l'effetto opposto di quello desiderato. 🚀",
+      "description_2": "Redo è stata creata con l'idea di avere un task manager semplice e facile da usare che ti possa aiutare a tenere traccia dei tuoi compiti giornalieri facendoti anche da promemoria. 📆",
+      "see_privacy_policy": "Vedi la nostra politica sulla privacy",
+      "visit_website": "Visita il mio sito web"
+    },
+    "contact_us": "Contattaci",
+    "languages": {
+      "en": "Inglese",
+      "it": "Italiano",
+      "es": "Spagnolo"
+    }
+  }
+}

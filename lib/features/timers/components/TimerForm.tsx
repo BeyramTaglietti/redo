@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
 import { useCallback } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { ScrollView, Text, View } from "react-native";
 
 import { TimerFormSchema, TimerFormValues } from "../validation";
@@ -18,6 +19,8 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
   const currentTimer = useTimersStore((state) =>
     state.timers.find((t) => t.id === timerId),
   );
+
+  const { t } = useTranslation();
 
   const titleRef = useVirtualKeyboard();
 
@@ -38,18 +41,20 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
       const now = new Date().valueOf();
 
       if (!data.days && !data.hours && !data.minutes) {
-        setError("days", { type: "manual", message: "Duration is required" });
-        setError("hours", { type: "manual", message: "Duration is required" });
+        setError("days", {
+          type: "manual",
+          message: t("timers.duration_required"),
+        });
+        setError("hours", {
+          type: "manual",
+          message: t("timers.duration_required"),
+        });
         setError("minutes", {
           type: "manual",
-          message: "Duration is required",
+          message: t("timers.duration_required"),
         });
         return;
       }
-
-      console.log(
-        `timer with ${data.days} days, ${data.hours} hours, ${data.minutes} minutes`,
-      );
 
       const days_ms = data.days ? data.days * 24 * 60 * 60 * 1000 : 0;
       const hours_ms = data.hours ? data.hours * 60 * 60 * 1000 : 0;
@@ -78,7 +83,7 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
       });
       router.back();
     },
-    [createTimer, setError, editTimer, timerId],
+    [createTimer, setError, editTimer, timerId, t],
   );
 
   return (
@@ -89,7 +94,7 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
           name="title"
           render={({ field: { value, onChange } }) => (
             <RDTextInput
-              placeholder="Redo's title"
+              placeholder={t("timers.redo_title")}
               value={value}
               onChangeText={onChange}
               ref={titleRef}
@@ -102,7 +107,7 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
             name="days"
             render={({ field: { value, onChange } }) => (
               <RDTextInput
-                placeholder="Days"
+                placeholder={t("app.day", { count: 2 })}
                 value={value?.toString()}
                 onChangeText={onChange}
                 keyboardType="numeric"
@@ -114,7 +119,7 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
             name="hours"
             render={({ field: { value, onChange } }) => (
               <RDTextInput
-                placeholder="Hours"
+                placeholder={t("app.hour", { count: 2 })}
                 value={value?.toString()}
                 onChangeText={onChange}
                 keyboardType="numeric"
@@ -126,7 +131,7 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
             name="minutes"
             render={({ field: { value, onChange } }) => (
               <RDTextInput
-                placeholder="Minutes"
+                placeholder={t("app.minute", { count: 2 })}
                 value={value?.toString()}
                 onChangeText={onChange}
                 keyboardType="numeric"
@@ -146,7 +151,10 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
             </Text>
           </View>
         )}
-        <RDButton title="create" onPress={handleSubmit(handleTimerCreate)} />
+        <RDButton
+          title={t("app.create")}
+          onPress={handleSubmit(handleTimerCreate)}
+        />
       </View>
     </ScrollView>
   );

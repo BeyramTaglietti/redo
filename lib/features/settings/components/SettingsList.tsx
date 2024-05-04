@@ -1,5 +1,6 @@
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { Linking, Pressable, Switch, View } from "react-native";
 
 import { RDText } from "@/lib/components";
@@ -7,7 +8,17 @@ import { useSettingsStore } from "@/lib/stores/settings";
 import { SUPPORT_MAIL, tailwindColors } from "@/lib/utils";
 
 export const SettingsList = () => {
-  const { notificationsEnabled, toggleNotifications } = useSettingsStore();
+  const notificationsEnabled = useSettingsStore(
+    (state) => state.notificationsEnabled,
+  );
+
+  const toggleNotifications = useSettingsStore(
+    (state) => state.toggleNotifications,
+  );
+
+  const language = useSettingsStore((state) => state.language);
+
+  const { t } = useTranslation();
 
   return (
     <View className="flex flex-col" style={{ gap: 32 }}>
@@ -19,8 +30,8 @@ export const SettingsList = () => {
             color={tailwindColors.primary.foreground}
           />
         }
-        title="Notifications"
-        description="This change won't affect currently active Redos"
+        title={t("app.notifications")}
+        description={t("settings.notifications_description")}
       >
         <Switch
           value={notificationsEnabled}
@@ -38,9 +49,10 @@ export const SettingsList = () => {
             color={tailwindColors.primary.foreground}
           />
         }
-        title="Language"
+        title={t("settings.language")}
+        onPress={() => router.push("/languages")}
       >
-        <RDText>English</RDText>
+        <RDText>{t(`settings.languages.${language}`)}</RDText>
       </SettingOption>
       <SettingOption
         icon={
@@ -50,7 +62,7 @@ export const SettingsList = () => {
             color={tailwindColors.primary.foreground}
           />
         }
-        title="About Redo"
+        title={t("settings.about_redo")}
         onPress={() => router.push("/about")}
       >
         <Entypo
@@ -67,7 +79,7 @@ export const SettingsList = () => {
             color={tailwindColors.primary.foreground}
           />
         }
-        title="Contact us"
+        title={t("settings.contact_us")}
         onPress={() =>
           Linking.openURL(`mailto:${SUPPORT_MAIL}?subject=Request`)
         }
@@ -97,11 +109,13 @@ const SettingOption = ({
 }) => {
   return (
     <Pressable
-      className="flex flex-row items-center justify-between w-full"
+      className="flex flex-row items-center justify-between w-full "
       style={{ gap: 16 }}
       onPress={onPress}
     >
-      <View className="bg-primary rounded-full p-2">{icon}</View>
+      <View className="bg-primary rounded-full h-10 w-10 flex justify-center items-center overflow-hidden">
+        {icon}
+      </View>
       <View className="flex flex-col flex-1">
         <RDText className="font-bold text-base">{title}</RDText>
         {description && (

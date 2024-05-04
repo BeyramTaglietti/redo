@@ -8,6 +8,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import {
   GestureResponderEvent,
   Pressable,
@@ -27,7 +28,7 @@ import { TimerCardBackground } from "./TimerCardBackground";
 import { Deletable } from "@/lib/components";
 import { usePushNotification } from "@/lib/hooks";
 import { Timer, useTimersStore } from "@/lib/stores/timers";
-import { HapticVibrate, cn, tailwindColors } from "@/lib/utils";
+import { HapticVibrate, cn, i18n, tailwindColors } from "@/lib/utils";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -46,6 +47,8 @@ export const TimerCard = ({
   onLongPress?: ((event: GestureResponderEvent) => void) | null | undefined;
   isActive?: boolean;
 }) => {
+  const { t } = useTranslation();
+
   const deleteTimer = useTimersStore((state) => state.deleteTimer);
   const postPoneTimer = useTimersStore((state) => state.postPoneTimer);
 
@@ -99,8 +102,8 @@ export const TimerCard = ({
     cleanNotification();
 
     const identifier = await schedulePushNotification({
-      title: "Oh no! 🚨",
-      body: `${timer.title} has expired!`,
+      title: t("timers.notification.title"),
+      body: t("timers.notification.description", { title: timer.title }),
       trigger: { seconds: timer.duration_ms / 1000 },
     });
 
@@ -116,6 +119,7 @@ export const TimerCard = ({
     timer.duration_ms,
     timer.id,
     timer.title,
+    t,
   ]);
 
   const formattedTimeLeft = useMemo(() => {
@@ -208,10 +212,12 @@ function formatDurationFromMilliseconds(ms: number) {
   hours = hours % 24;
 
   const parts = [];
-  if (days) parts.push(`${days} days`);
-  if (hours) parts.push(`${hours} hours`);
-  if (minutes) parts.push(`${minutes} minutes`);
-  if (seconds) parts.push(`${seconds} seconds`);
+  if (days) parts.push(`${days} ${i18n.t("app.day", { count: days })}`);
+  if (hours) parts.push(`${hours} ${i18n.t("app.hour", { count: hours })}`);
+  if (minutes)
+    parts.push(`${minutes} ${i18n.t("app.minute", { count: minutes })}`);
+  if (seconds)
+    parts.push(`${seconds} ${i18n.t("app.second", { count: seconds })}`);
 
   return parts.splice(0, 2).join(" ");
 }

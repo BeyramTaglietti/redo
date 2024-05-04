@@ -1,0 +1,46 @@
+{
+  "app": {
+    "create": "Create",
+
+    "day": "day",
+    "day_plural": "days",
+    "hour": "hour",
+    "hour_plural": "hours",
+    "minute": "minute",
+    "minute_plural": "minutes",
+    "second": "second",
+    "second_plural": "seconds",
+
+    "close": "Close",
+    "settings": "Settings",
+    "notifications": "Notifications",
+    "languages": "Languages"
+  },
+  "timers": {
+    "create_timer": "Create timer",
+    "redo_title": "Redo's title",
+    "duration_required": "Duration is required",
+    "notification": {
+      "title": "Oh no! 🚨",
+      "description": "{{title}} has expired!"
+    }
+  },
+  "settings": {
+    "notifications_description": "This change won't affect currently active Redos",
+    "language": "Language",
+    "about_redo": "About Redo",
+    "about": {
+      "title": "Hi there 👋",
+      "description": "Thanks for using Redo, I hope the app is being useful to you as much as it is to me. Make sure to not overplan your day to day life or you could fall into the trap of procrastination and have the opposite effect of what Redo's about. 🚀",
+      "description_2": "Redo was built with the idea of having a simple and easy to use task manager that helps you keep track of your daily habits while also acting as a remainder. 📆",
+      "see_privacy_policy": "See our Privacy Policy",
+      "visit_website": "Visit my website"
+    },
+    "contact_us": "Contact us",
+    "languages": {
+      "en": "English",
+      "it": "Italian",
+      "es": "Spanish"
+    }
+  }
+}

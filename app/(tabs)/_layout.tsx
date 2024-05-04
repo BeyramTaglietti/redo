@@ -1,6 +1,7 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { useColorScheme } from "react-native";
 
 import { tailwindColors } from "@/lib/utils";
@@ -14,6 +15,7 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const { t } = useTranslation();
 
   return (
     <Tabs
@@ -53,7 +55,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          title: "Settings",
+          title: t("app.settings"),
           tabBarIcon: ({ color }) => <TabBarIcon name="gear" color={color} />,
         }}
       />

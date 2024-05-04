@@ -1,24 +1,18 @@
+import { useTranslation } from "react-i18next";
 import { Linking, View } from "react-native";
 
 import { RDText } from "@/lib/components";
 import { PORTFOLIO_URL, PRIVACY_POLICY_URL } from "@/lib/utils";
 
 export default function AboutScreen() {
+  const { t } = useTranslation();
+
   return (
     <View className="p-4" style={{ gap: 16 }}>
-      <RDText className="text-2xl">Hi there 👋</RDText>
-      <RDText>
-        Thanks for using Redo, I hope the app is being useful to you as much as
-        it is to me. Make sure to not overplan your day to day life or you could
-        fall into the trap of procrastination and have the opposite effect of
-        what Redo&apos;s about. 🚀
-      </RDText>
+      <RDText className="text-2xl">{t("settings.about.title")}</RDText>
+      <RDText>{t("settings.about.description")}</RDText>
 
-      <RDText>
-        Redo was built with the idea of having a simple and easy to use task
-        manager that helps you keep track of your daily habits while also acting
-        as a remainder. 📅
-      </RDText>
+      <RDText>{t("settings.about.description_2")}</RDText>
       <RDText>- Beyram</RDText>
 
       <View className="flex flex-col w-full items-end" style={{ gap: 16 }}>
@@ -26,13 +20,13 @@ export default function AboutScreen() {
           className="text-primary"
           onPress={() => Linking.openURL(PRIVACY_POLICY_URL)}
         >
-          See our Privacy Policy
+          {t("settings.about.see_privacy_policy")}
         </RDText>
         <RDText
           className="text-primary"
           onPress={() => Linking.openURL(PORTFOLIO_URL)}
         >
-          Visit my website
+          {t("settings.about.visit_website")}
         </RDText>
       </View>
     </View>
