@@ -1,4 +1,3 @@
-import { tailwindColors } from "@/lib/utils";
 import { memo, useEffect } from "react";
 import Animated, {
   Easing,
@@ -6,6 +5,8 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+
+import { tailwindColors } from "@/lib/utils";
 
 const BACKDROP_COLOR = "#86EFAC";
 

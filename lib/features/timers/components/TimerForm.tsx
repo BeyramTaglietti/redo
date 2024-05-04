@@ -83,7 +83,7 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
 
   return (
     <ScrollView className="h-full">
-      <View className="flex flex-col h-full w-full " style={{ gap: 16 }}>
+      <View className="flex flex-col h-full w-full" style={{ gap: 16 }}>
         <Controller
           control={control}
           name="title"

@@ -1,5 +1,6 @@
-import { SettingsList } from "@/lib/features/settings";
 import { View } from "react-native";
+
+import { SettingsList } from "@/lib/features/settings";
 
 export default function TabTwoScreen() {
   return (

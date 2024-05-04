@@ -1,11 +1,11 @@
 import { Link } from "expo-router";
 import { View } from "react-native";
+import DraggableFlatList from "react-native-draggable-flatlist";
 
 import { TimerCard } from "./TimerCard";
 
 import { RDButton } from "@/lib/components";
 import { useTimersStore } from "@/lib/stores/timers";
-import DraggableFlatList from "react-native-draggable-flatlist";
 
 export const TimersList = () => {
   const timers = useTimersStore((state) => state.timers);

@@ -15,18 +15,19 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
-import { Deletable } from "@/lib/components";
-import { usePushNotification } from "@/lib/hooks";
-import { Timer, useTimersStore } from "@/lib/stores/timers";
-import { HapticVibrate, cn, tailwindColors } from "@/lib/utils";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withClamp,
   withSpring,
 } from "react-native-reanimated";
+
 import { TimerCardBackground } from "./TimerCardBackground";
+
+import { Deletable } from "@/lib/components";
+import { usePushNotification } from "@/lib/hooks";
+import { Timer, useTimersStore } from "@/lib/stores/timers";
+import { HapticVibrate, cn, tailwindColors } from "@/lib/utils";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
