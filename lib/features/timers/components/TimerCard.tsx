@@ -8,7 +8,6 @@ import {
   useMemo,
   useState,
 } from "react";
-import { useTranslation } from "react-i18next";
 import {
   GestureResponderEvent,
   Pressable,
@@ -23,10 +22,10 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 
+import { useTimerNotifications } from "../hooks";
 import { TimerCardBackground } from "./TimerCardBackground";
 
 import { Deletable } from "@/lib/components";
-import { usePushNotification } from "@/lib/hooks";
 import { Timer, useTimersStore } from "@/lib/stores/timers";
 import { HapticVibrate, cn, i18n, tailwindColors } from "@/lib/utils";
 
@@ -47,12 +46,11 @@ export const TimerCard = ({
   onLongPress?: ((event: GestureResponderEvent) => void) | null | undefined;
   isActive?: boolean;
 }) => {
-  const { t } = useTranslation();
-
   const deleteTimer = useTimersStore((state) => state.deleteTimer);
   const postPoneTimer = useTimersStore((state) => state.postPoneTimer);
 
-  const [schedulePushNotification] = usePushNotification();
+  const { createTimerNotification, removeTimerNotification } =
+    useTimerNotifications();
 
   const calculateSecondsLeft = useCallback(() => {
     return Math.round(
@@ -78,49 +76,27 @@ export const TimerCard = ({
     return () => {
       clearInterval(interval);
     };
-  }, [
-    calculateSecondsLeft,
-    timer.updated_at,
-    timer.id,
-    schedulePushNotification,
-  ]);
-
-  const cleanNotification = useCallback(async () => {
-    if (timer.notification_identifier) {
-      Notifications.cancelScheduledNotificationAsync(
-        timer.notification_identifier,
-      );
-    }
-  }, [timer.notification_identifier]);
+  }, [calculateSecondsLeft, timer.updated_at, timer.id]);
 
   const handleDelete = useCallback(() => {
-    cleanNotification();
+    removeTimerNotification(timer.notification_identifier);
     deleteTimer(timer.id);
-  }, [cleanNotification, deleteTimer, timer.id]);
+  }, [deleteTimer, removeTimerNotification, timer]);
 
   const handlePostPone = useCallback(async () => {
-    cleanNotification();
+    removeTimerNotification(timer.notification_identifier);
 
-    const identifier = await schedulePushNotification({
-      title: t("timers.notification.title"),
-      body: t("timers.notification.description", { title: timer.title }),
-      trigger: { seconds: timer.duration_ms / 1000 },
-    });
+    const identifier = await createTimerNotification(
+      timer.title,
+      timer.duration_ms,
+    );
 
     if (!identifier) {
       return;
     }
 
     postPoneTimer(timer.id, identifier);
-  }, [
-    cleanNotification,
-    postPoneTimer,
-    schedulePushNotification,
-    timer.duration_ms,
-    timer.id,
-    timer.title,
-    t,
-  ]);
+  }, [removeTimerNotification, timer, createTimerNotification, postPoneTimer]);
 
   const formattedTimeLeft = useMemo(() => {
     return formatDurationFromMilliseconds(timeLeft * 1000);

@@ -6,11 +6,12 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { ScrollView, Text, View } from "react-native";
 
+import { useTimerNotifications } from "../hooks";
 import { TimerFormSchema, TimerFormValues } from "../validation";
 
 import { RDButton, RDTextInput } from "@/lib/components";
 import { useVirtualKeyboard } from "@/lib/hooks";
-import { useTimersStore } from "@/lib/stores/timers";
+import { Timer, useTimersStore } from "@/lib/stores/timers";
 import { createUUID, tailwindColors } from "@/lib/utils";
 
 export const TimerForm = ({ timerId }: { timerId?: string }) => {
@@ -21,6 +22,9 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
   );
 
   const { t } = useTranslation();
+
+  const { createTimerNotification, removeTimerNotification } =
+    useTimerNotifications();
 
   const titleRef = useVirtualKeyboard();
 
@@ -37,7 +41,7 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
   });
 
   const handleTimerCreate = useCallback<SubmitHandler<TimerFormValues>>(
-    (data) => {
+    async (data) => {
       const now = new Date().valueOf();
 
       if (!data.days && !data.hours && !data.minutes) {
@@ -62,28 +66,41 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
 
       const duration = days_ms + hours_ms + minutes_ms;
 
-      if (timerId) {
-        editTimer({
-          id: timerId,
-          title: data.title,
-          created_at: now,
-          updated_at: now,
-          duration_ms: duration,
-        });
-        router.back();
+      if (timerId)
+        removeTimerNotification(currentTimer!.notification_identifier!);
+      const identifier = await createTimerNotification(data.title, duration);
+
+      if (!identifier) {
         return;
       }
 
-      createTimer({
-        id: createUUID(),
+      const timer: Timer = {
+        id: timerId ?? createUUID(),
         title: data.title,
         created_at: now,
         updated_at: now,
         duration_ms: duration,
-      });
+        notification_identifier: identifier,
+      };
+
+      if (timerId) {
+        editTimer(timer);
+      } else {
+        createTimer(timer);
+      }
+
       router.back();
     },
-    [createTimer, setError, editTimer, timerId, t],
+    [
+      timerId,
+      removeTimerNotification,
+      currentTimer,
+      createTimerNotification,
+      setError,
+      t,
+      editTimer,
+      createTimer,
+    ],
   );
 
   return (
