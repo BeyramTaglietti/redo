@@ -23,7 +23,7 @@ export const RDTextInput = memo(
             selectionColor={tailwindColors.primary.DEFAULT}
             cursorColor={tailwindColors.primary.DEFAULT}
             className={cn(
-              "w-full h-14 rounded-xl px-4 bg-sheet-card-dark/10 dark:bg-sheet-card-dark text-black dark:text-white leading-[0px] text-xl",
+              "w-full h-12 text-black dark:text-white bg-sheet-card-dark/10 dark:bg-sheet-card-dark px-4 rounded-xl text-lg leading-[0px]",
               error && "border-2 border-destructive",
               className,
             )}
