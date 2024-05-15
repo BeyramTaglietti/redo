@@ -2,8 +2,8 @@
 import React, { forwardRef, memo } from "react";
 import { TextInput, TextInputProps, View } from "react-native";
 
-import { RDText } from "./RDText";
 import { cn, tailwindColors } from "../utils";
+import { RDText } from "./RDText";
 
 interface RDTextInputProps extends TextInputProps {
   error?: boolean;
@@ -23,10 +23,13 @@ export const RDTextInput = memo(
             selectionColor={tailwindColors.primary.DEFAULT}
             cursorColor={tailwindColors.primary.DEFAULT}
             className={cn(
-              "w-full h-12 text-black dark:text-white bg-sheet-card-dark/10 dark:bg-sheet-card-dark px-4 rounded-xl text-lg leading-[0px]",
+              "w-full h-12 text-black dark:text-white bg-sheet-card-dark/10 dark:bg-sheet-card-dark px-4 rounded-xl",
               error && "border-2 border-destructive",
               className,
             )}
+            style={{
+              fontSize: 18,
+            }}
             {...buttonProps}
           />
         </View>

@@ -141,7 +141,7 @@ export const Deletable = memo(
         >
           <Animated.View style={animatedSlider}>{children}</Animated.View>
           <Animated.View
-            className="absolute top-0 left-0 w-full h-full bg-destructive/100 justify-center items-end rounded-xl"
+            className="absolute top-0 left-0 w-full h-full bg-destructive/80 justify-center items-end rounded-xl"
             style={animatedTrashIcon}
           >
             <MaterialIcons name="delete" color="white" size={30} />
