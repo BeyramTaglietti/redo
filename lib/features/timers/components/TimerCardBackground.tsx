@@ -60,3 +60,5 @@ export const TimerCardBackground = memo(
     );
   },
 );
+
+TimerCardBackground.displayName = "TimerCardBackground";

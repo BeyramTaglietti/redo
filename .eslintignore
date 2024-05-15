@@ -1,9 +1,0 @@
-coverage
-public
-dist
-pnpm-lock.yaml
-babel.config.js
-metro.config.js
-tailwind.config.js
-ios
-android

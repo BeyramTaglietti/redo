@@ -151,3 +151,5 @@ export const Deletable = memo(
     );
   },
 );
+
+Deletable.displayName = "Deletable";
