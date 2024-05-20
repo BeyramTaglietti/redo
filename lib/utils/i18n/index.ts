@@ -13,7 +13,9 @@ enum SupportedLanguages {
   fr = "fr",
 }
 
-const translations: { [key in SupportedLanguages]: { translation: any } } = {
+export const resources: {
+  [key in SupportedLanguages]: { translation: any };
+} = {
   es: {
     translation: es,
   },
@@ -34,7 +36,7 @@ i18n.use(initReactI18next).init({
   interpolation: {
     escapeValue: false,
   },
-  resources: translations,
+  resources,
 });
 
 export { SupportedLanguages, i18n };
