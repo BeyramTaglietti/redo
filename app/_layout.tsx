@@ -7,6 +7,8 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSettingsStore } from "@/lib/stores/settings";
 import { i18n, tailwindColors } from "@/lib/utils";
 
+import * as SystemUI from "expo-system-ui";
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
@@ -14,7 +16,11 @@ export default function RootLayout() {
 
   useEffect(() => {
     i18n.changeLanguage(currentLanguage);
-  }, [currentLanguage]);
+
+    SystemUI.setBackgroundColorAsync(
+      tailwindColors.background[colorScheme === "light" ? "DEFAULT" : "dark"],
+    );
+  }, [currentLanguage, colorScheme]);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
