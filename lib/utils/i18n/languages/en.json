@@ -43,5 +43,14 @@
       "es": "Spanish",
       "fr": "French"
     }
+  },
+  "onboarding": {
+    "welcome": "Welcome to Redo!",
+    "continue": "Continue",
+    "screen_first": "Manage your repetitive tasks with a simple and intuitive interface",
+    "screen_second": "Enable notifications to receive a reminder whenever your Redos expire",
+    "screen_third": "You are good to go! Remember not to overplan your life and enjoy the journey 🚀",
+    "complete": "Try Redo!",
+    "enable_notifications": "Enable notifications"
   }
 }

@@ -43,5 +43,14 @@
       "es": "Espagnol",
       "fr": "Français"
     }
+  },
+  "onboarding": {
+    "welcome": "Bienvenue sur Redo!",
+    "continue": "Continuer",
+    "screen_first": "Gérez vos tâches répétitives avec une interface simple et intuitive",
+    "screen_second": "Activez les notifications pour recevoir un rappel lorsque vos Redo expirent",
+    "screen_third": "Vous êtes prêt à partir! N'oubliez pas de ne pas trop planifier votre vie et profitez du voyage 🚀",
+    "complete": "Essayez Redo!",
+    "enable_notifications": "Activer les notifications"
   }
 }
