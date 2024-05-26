@@ -51,6 +51,7 @@
     "screen_second": "Activez les notifications pour recevoir un rappel lorsque vos Redo expirent",
     "screen_third": "Vous êtes prêt à partir! N'oubliez pas de ne pas trop planifier votre vie et profitez du voyage 🚀",
     "complete": "Essayez Redo!",
-    "enable_notifications": "Activer les notifications"
+    "enable_notifications": "Activer les notifications",
+    "slide_to_close": "Supprime-moi en glissant vers la gauche"
   }
 }

@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
+import { createUUID, i18n } from "@/lib/utils";
 import { Timer } from "./timers.model";
 
 interface State {
@@ -17,7 +18,16 @@ interface Actions {
 }
 
 const initialState: State = {
-  timers: [],
+  timers: [
+    {
+      id: createUUID(),
+      title: i18n.t("onboarding.slide_to_close"),
+      duration_ms: 1000 * 60 * 5,
+      created_at: new Date().valueOf(),
+      updated_at: new Date().valueOf(),
+      notification_identifier: "",
+    },
+  ],
 };
 
 export const useTimersStore = create<State & Actions>()(

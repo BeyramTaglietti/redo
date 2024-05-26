@@ -51,6 +51,7 @@
     "screen_second": "Habilita las notificaciones para recibir un recordatorio cuando tus Redos expiren",
     "screen_third": "¡Estás listo para comenzar! Recuerda no planificar demasiado tu vida y disfruta del viaje 🚀",
     "complete": "¡Prueba Redo!",
-    "enable_notifications": "Habilitar notificaciones"
+    "enable_notifications": "Habilitar notificaciones",
+    "slide_to_close": "Elimíname deslizando hacia la izquierda"
   }
 }
