@@ -10,7 +10,6 @@ export const useTimerNotifications = () => {
 
   const createTimerNotification = useCallback(
     async (timerTitle: string, timerDurationMs: number) => {
-      console.log("received duration", timerDurationMs);
       const identifier = await schedulePushNotification({
         title: t("timers.notification.title"),
         body: t("timers.notification.description", { title: timerTitle }),

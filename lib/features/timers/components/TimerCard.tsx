@@ -118,7 +118,7 @@ export const TimerCard = ({
     editTimer({ ...timer, is_paused: true, paused_at: new Date().valueOf() });
   }, [editTimer, removeTimerNotification, timer]);
 
-  const handleResume = useCallback(() => {
+  const handleResume = useCallback(async () => {
     if (!timer.paused_at) {
       return;
     }
@@ -128,50 +128,60 @@ export const TimerCard = ({
       created_at: new Date().valueOf() - timer.paused_at,
     };
 
-    editTimer({
-      ...timer,
-      is_paused: false,
-      paused_at: null,
-      updated_at: newVals.updated_at,
-      created_at: newVals.created_at,
-    });
-    createTimerNotification(
+    const newIdentifier = await createTimerNotification(
       timer.title,
       calculateSecondsLeft({
         updated_at: newVals.updated_at,
         duration_ms: timer.duration_ms,
       }) * 1000,
     );
+
+    editTimer({
+      ...timer,
+      is_paused: false,
+      paused_at: null,
+      updated_at: newVals.updated_at,
+      created_at: newVals.created_at,
+      notification_identifier: newIdentifier ?? "",
+    });
   }, [createTimerNotification, editTimer, timer]);
 
   const formattedTimeLeft = useMemo(() => {
     return formatDurationFromMilliseconds(timeLeft * 1000);
   }, [timeLeft]);
 
-  const marginX = useSharedValue(0);
-
-  const viewStyle = useAnimatedStyle(() => {
+  const draggedItemState = useSharedValue({
+    margin: 0,
+  });
+  const draggedItemStyle = useAnimatedStyle(() => {
     return {
-      marginHorizontal: marginX.value,
+      marginHorizontal: draggedItemState.value.margin,
     };
   });
 
   useEffect(() => {
     if (isDragging) {
       HapticVibrate("Medium");
-      marginX.value = withSpring(32);
+      draggedItemState.value = {
+        margin: withSpring(32),
+      };
     } else {
       HapticVibrate("Light");
-      marginX.value = withClamp({ min: 0 }, withSpring(0));
+      draggedItemState.value = {
+        margin: withClamp({ min: 0 }, withSpring(0)),
+      };
     }
-  }, [isDragging, marginX]);
+  }, [isDragging, draggedItemState]);
 
   if (timeLeft === null) {
     return null;
   }
 
   return (
-    <Animated.View className={cn(isDragging && "opacity-60")} style={viewStyle}>
+    <Animated.View
+      className={cn(isDragging && "opacity-60")}
+      style={draggedItemStyle}
+    >
       <Deletable onDelete={handleDelete}>
         <Pressable
           className="rounded-xl h-40 w-full relative overflow-hidden"
@@ -194,12 +204,14 @@ export const TimerCard = ({
               className="flex flex-row flex-1 justify-end items-end"
               style={{ gap: 16 }}
             >
-              <ActionButton
-                iconName={
-                  timer.is_paused ? "controller-play" : "controller-paus"
-                }
-                onPress={timer.is_paused ? handleResume : handlePause}
-              />
+              {timeLeft > 0 && (
+                <ActionButton
+                  iconName={
+                    timer.is_paused ? "controller-play" : "controller-paus"
+                  }
+                  onPress={timer.is_paused ? handleResume : handlePause}
+                />
+              )}
               <ActionButton iconName="cycle" onPress={handlePostPone} />
             </View>
           </View>
