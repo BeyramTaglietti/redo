@@ -40,18 +40,22 @@ Notifications.setNotificationHandler({
   }),
 });
 
+type TimerCardProps = {
+  timer: Timer;
+  onLongPress?: ((event: GestureResponderEvent) => void) | null | undefined;
+  isDragging?: boolean;
+};
+
 export const TimerCard = ({
   timer,
   onLongPress,
   isDragging,
-}: {
-  timer: Timer;
-  onLongPress?: ((event: GestureResponderEvent) => void) | null | undefined;
-  isDragging?: boolean;
-}) => {
+}: TimerCardProps) => {
   const deleteTimer = useTimersStore((state) => state.deleteTimer);
   const postPoneTimer = useTimersStore((state) => state.postPoneTimer);
   const editTimer = useTimersStore((state) => state.editTimer);
+
+  const [isSliding, setIsSliding] = useState(false);
 
   const { createTimerNotification, removeTimerNotification } =
     useTimerNotifications();
@@ -173,20 +177,21 @@ export const TimerCard = ({
     }
   }, [isDragging, draggedItemState]);
 
-  if (timeLeft === null) {
-    return null;
-  }
-
   return (
     <Animated.View
       className={cn(isDragging && "opacity-60")}
       style={draggedItemStyle}
     >
-      <Deletable onDelete={handleDelete}>
+      <Deletable
+        onDelete={handleDelete}
+        onSlideAction={(sliding) => {
+          setIsSliding(sliding);
+        }}
+      >
         <Pressable
           className="rounded-xl h-40 w-full relative overflow-hidden"
           onPress={() => {
-            router.push(`/${timer.id}`);
+            if (!isSliding) router.push(`/${timer.id}`);
           }}
           onLongPress={onLongPress}
         >
@@ -212,7 +217,9 @@ export const TimerCard = ({
                   onPress={timer.is_paused ? handleResume : handlePause}
                 />
               )}
-              <ActionButton iconName="cycle" onPress={handlePostPone} />
+              {!timer.is_paused && (
+                <ActionButton iconName="cycle" onPress={handlePostPone} />
+              )}
             </View>
           </View>
         </Pressable>

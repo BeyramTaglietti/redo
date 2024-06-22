@@ -14,16 +14,15 @@ import Animated, {
 
 import { HapticVibrate, animateOut } from "../utils";
 
+type DeletableProps = {
+  children: React.ReactNode;
+  onDelete: () => void;
+  deleteMessage?: string;
+  onSlideAction?: (sliding: boolean) => void;
+};
+
 export const Deletable = memo(
-  ({
-    children,
-    onDelete,
-    deleteMessage,
-  }: {
-    children: React.ReactNode;
-    onDelete: () => void;
-    deleteMessage?: string;
-  }) => {
+  ({ children, onDelete, deleteMessage, onSlideAction }: DeletableProps) => {
     const { width: SCREEN_WIDTH } = useWindowDimensions();
     const THRESHOLD = useMemo(() => SCREEN_WIDTH / 3, [SCREEN_WIDTH]);
 
@@ -92,6 +91,8 @@ export const Deletable = memo(
       .onChange((event) => {
         if (event.translationX > 0) return;
 
+        if (onSlideAction) runOnJS(onSlideAction)(true);
+
         if (event.translationX < -THRESHOLD) {
           offsetShareValue.value = withSpring(-SCREEN_WIDTH + 50);
           runOnJS(triggerHapticFeedback)("Medium");
@@ -102,6 +103,7 @@ export const Deletable = memo(
       })
       .onFinalize((event) => {
         if (event.translationX < -THRESHOLD) return;
+        if (onSlideAction) runOnJS(onSlideAction)(false);
 
         offsetShareValue.value = withTiming(0, {
           duration: 400,
