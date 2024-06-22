@@ -6,50 +6,83 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-import { tailwindColors } from "@/lib/utils";
+import { cn, tailwindColors } from "@/lib/utils";
 
 const BACKDROP_COLOR = "#86EFAC";
 
 export const TimerCardBackground = memo(
-  ({ timeLeft, duration_ms }: { timeLeft: number; duration_ms: number }) => {
-    const shared = useSharedValue({
+  ({
+    timeLeft,
+    duration_ms,
+    isPaused,
+  }: {
+    timeLeft: number;
+    duration_ms: number;
+    isPaused: boolean;
+  }) => {
+    const slidingViewState = useSharedValue({
       width: (timeLeft / (duration_ms / 1000)) * 100,
+      background: tailwindColors.primary.DEFAULT,
+    });
+
+    const backdropViewState = useSharedValue({
       background: BACKDROP_COLOR,
     });
 
     const slidingViewStyle = useAnimatedStyle(() => {
       return {
-        width: withTiming(`${shared.value.width}%`, {
+        width: withTiming(`${slidingViewState.value.width}%`, {
           duration: 500,
           easing: Easing.bezier(0.25, 0.1, 0.25, 1),
         }),
+        backgroundColor: withTiming(slidingViewState.value.background),
       };
     });
 
     const backdropViewStyle = useAnimatedStyle(() => {
       return {
-        backgroundColor: withTiming(shared.value.background),
+        backgroundColor: withTiming(backdropViewState.value.background),
       };
     });
 
     useEffect(() => {
-      shared.value = {
-        background: BACKDROP_COLOR,
+      slidingViewState.value = {
         width: (timeLeft / (duration_ms / 1000)) * 100,
+        background: tailwindColors.primary.DEFAULT,
       };
 
+      if (isPaused) {
+        slidingViewState.value = {
+          width: slidingViewState.value.width,
+          background: "#828583",
+        };
+        backdropViewState.value = {
+          background: "#D1D5DB",
+        };
+      } else {
+        backdropViewState.value = {
+          background: BACKDROP_COLOR,
+        };
+      }
+
       if (timeLeft <= 0) {
-        shared.value = {
+        slidingViewState.value = {
           width: 0,
           background: tailwindColors.destructive,
         };
+        backdropViewState.value = {
+          background: tailwindColors.destructive,
+        };
       }
-    }, [duration_ms, shared, timeLeft]);
+    }, [duration_ms, timeLeft, isPaused, slidingViewState, backdropViewState]);
 
     return (
       <>
         <Animated.View
-          className="absolute bg-primary w-full h-full z-10 rounded-xl"
+          className={cn(
+            "absolute bg-primary w-full h-full z-10 rounded-xl",
+            isPaused ? "bg-gray-400" : "",
+          )}
           style={slidingViewStyle}
         />
         <Animated.View

@@ -9,11 +9,12 @@ export const useTimerNotifications = () => {
   const { t } = useTranslation();
 
   const createTimerNotification = useCallback(
-    async (timerTitle: string, timerDuration: number) => {
+    async (timerTitle: string, timerDurationMs: number) => {
+      console.log("received duration", timerDurationMs);
       const identifier = await schedulePushNotification({
         title: t("timers.notification.title"),
         body: t("timers.notification.description", { title: timerTitle }),
-        trigger: { seconds: timerDuration / 1000 },
+        trigger: { seconds: timerDurationMs / 1000 },
       });
 
       return identifier;

@@ -26,6 +26,8 @@ const initialState: State = {
       created_at: new Date().valueOf(),
       updated_at: new Date().valueOf(),
       notification_identifier: "",
+      is_paused: false,
+      paused_at: 0,
     },
   ],
 };

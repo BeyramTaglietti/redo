@@ -28,8 +28,9 @@ import { TimerCardBackground } from "./TimerCardBackground";
 
 import { Deletable } from "@/lib/components";
 import { Timer, useTimersStore } from "@/lib/stores/timers";
-import { HapticVibrate, cn, i18n, tailwindColors } from "@/lib/utils";
+import { HapticVibrate, cn, tailwindColors } from "@/lib/utils";
 import { BlurView } from "expo-blur";
+import { calculateSecondsLeft, formatDurationFromMilliseconds } from "../utils";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -42,31 +43,43 @@ Notifications.setNotificationHandler({
 export const TimerCard = ({
   timer,
   onLongPress,
-  isActive,
+  isDragging,
 }: {
   timer: Timer;
   onLongPress?: ((event: GestureResponderEvent) => void) | null | undefined;
-  isActive?: boolean;
+  isDragging?: boolean;
 }) => {
   const deleteTimer = useTimersStore((state) => state.deleteTimer);
   const postPoneTimer = useTimersStore((state) => state.postPoneTimer);
+  const editTimer = useTimersStore((state) => state.editTimer);
 
   const { createTimerNotification, removeTimerNotification } =
     useTimerNotifications();
 
-  const calculateSecondsLeft = useCallback(() => {
-    return Math.round(
-      (timer.updated_at + timer.duration_ms - new Date().valueOf()) / 1000,
-    );
-  }, [timer.duration_ms, timer.updated_at]);
-
-  const [timeLeft, setTimeLeft] = useState<number>(calculateSecondsLeft());
+  const [timeLeft, setTimeLeft] = useState<number>(
+    calculateSecondsLeft({
+      updated_at: timer.updated_at,
+      duration_ms: timer.duration_ms,
+    }),
+  );
 
   useEffect(() => {
-    setTimeLeft(calculateSecondsLeft());
+    if (timer.is_paused) {
+      return;
+    }
+
+    setTimeLeft(
+      calculateSecondsLeft({
+        updated_at: timer.updated_at,
+        duration_ms: timer.duration_ms,
+      }),
+    );
 
     const interval = setInterval(() => {
-      const left = calculateSecondsLeft();
+      const left = calculateSecondsLeft({
+        updated_at: timer.updated_at,
+        duration_ms: timer.duration_ms,
+      });
 
       if (left <= 0) {
         clearInterval(interval);
@@ -78,7 +91,7 @@ export const TimerCard = ({
     return () => {
       clearInterval(interval);
     };
-  }, [calculateSecondsLeft, timer.updated_at, timer.id]);
+  }, [timer.updated_at, timer.id, timer.is_paused, timer.duration_ms]);
 
   const handleDelete = useCallback(() => {
     removeTimerNotification(timer.notification_identifier);
@@ -100,6 +113,37 @@ export const TimerCard = ({
     postPoneTimer(timer.id, identifier);
   }, [removeTimerNotification, timer, createTimerNotification, postPoneTimer]);
 
+  const handlePause = useCallback(() => {
+    removeTimerNotification(timer.notification_identifier);
+    editTimer({ ...timer, is_paused: true, paused_at: new Date().valueOf() });
+  }, [editTimer, removeTimerNotification, timer]);
+
+  const handleResume = useCallback(() => {
+    if (!timer.paused_at) {
+      return;
+    }
+
+    const newVals = {
+      updated_at: new Date().valueOf() - timer.paused_at + timer.updated_at,
+      created_at: new Date().valueOf() - timer.paused_at,
+    };
+
+    editTimer({
+      ...timer,
+      is_paused: false,
+      paused_at: null,
+      updated_at: newVals.updated_at,
+      created_at: newVals.created_at,
+    });
+    createTimerNotification(
+      timer.title,
+      calculateSecondsLeft({
+        updated_at: newVals.updated_at,
+        duration_ms: timer.duration_ms,
+      }) * 1000,
+    );
+  }, [createTimerNotification, editTimer, timer]);
+
   const formattedTimeLeft = useMemo(() => {
     return formatDurationFromMilliseconds(timeLeft * 1000);
   }, [timeLeft]);
@@ -113,21 +157,21 @@ export const TimerCard = ({
   });
 
   useEffect(() => {
-    if (isActive) {
+    if (isDragging) {
       HapticVibrate("Medium");
       marginX.value = withSpring(32);
     } else {
       HapticVibrate("Light");
       marginX.value = withClamp({ min: 0 }, withSpring(0));
     }
-  }, [isActive, marginX]);
+  }, [isDragging, marginX]);
 
   if (timeLeft === null) {
     return null;
   }
 
   return (
-    <Animated.View className={cn(isActive && "opacity-60")} style={viewStyle}>
+    <Animated.View className={cn(isDragging && "opacity-60")} style={viewStyle}>
       <Deletable onDelete={handleDelete}>
         <Pressable
           className="rounded-xl h-40 w-full relative overflow-hidden"
@@ -139,6 +183,7 @@ export const TimerCard = ({
           <TimerCardBackground
             timeLeft={timeLeft}
             duration_ms={timer.duration_ms}
+            isPaused={timer.is_paused}
           />
           <View className="p-4 z-20 w-full h-full">
             <Text className="text-white font-bold text-xl">{timer.title}</Text>
@@ -147,8 +192,14 @@ export const TimerCard = ({
             </Text>
             <View
               className="flex flex-row flex-1 justify-end items-end"
-              style={{ gap: 32 }}
+              style={{ gap: 16 }}
             >
+              <ActionButton
+                iconName={
+                  timer.is_paused ? "controller-play" : "controller-paus"
+                }
+                onPress={timer.is_paused ? handleResume : handlePause}
+              />
               <ActionButton iconName="cycle" onPress={handlePostPone} />
             </View>
           </View>
@@ -186,24 +237,3 @@ const ActionButton = ({
     </BlurView>
   );
 };
-
-function formatDurationFromMilliseconds(ms: number) {
-  let seconds = Math.floor(ms / 1000);
-  let minutes = Math.floor(seconds / 60);
-  let hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
-
-  seconds = seconds % 60;
-  minutes = minutes % 60;
-  hours = hours % 24;
-
-  const parts = [];
-  if (days) parts.push(`${days} ${i18n.t("app.day", { count: days })}`);
-  if (hours) parts.push(`${hours} ${i18n.t("app.hour", { count: hours })}`);
-  if (minutes)
-    parts.push(`${minutes} ${i18n.t("app.minute", { count: minutes })}`);
-  if (seconds)
-    parts.push(`${seconds} ${i18n.t("app.second", { count: seconds })}`);
-
-  return parts.splice(0, 2).join(" ");
-}

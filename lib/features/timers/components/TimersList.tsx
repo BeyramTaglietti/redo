@@ -27,7 +27,7 @@ export const TimersList = () => {
         data={timers}
         renderItem={({ item, drag, isActive }) => (
           <View className="my-2">
-            <TimerCard timer={item} onLongPress={drag} isActive={isActive} />
+            <TimerCard timer={item} onLongPress={drag} isDragging={isActive} />
           </View>
         )}
         keyExtractor={(item) => item.id}

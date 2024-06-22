@@ -81,6 +81,8 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
         updated_at: now,
         duration_ms: duration,
         notification_identifier: identifier,
+        is_paused: false,
+        paused_at: null,
       };
 
       if (timerId) {
