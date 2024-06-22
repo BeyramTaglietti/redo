@@ -10,6 +10,7 @@ import {
 } from "react";
 import {
   GestureResponderEvent,
+  Platform,
   Pressable,
   Text,
   TouchableOpacity,
@@ -28,12 +29,13 @@ import { TimerCardBackground } from "./TimerCardBackground";
 import { Deletable } from "@/lib/components";
 import { Timer, useTimersStore } from "@/lib/stores/timers";
 import { HapticVibrate, cn, i18n, tailwindColors } from "@/lib/utils";
+import { BlurView } from "expo-blur";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
     shouldPlaySound: true,
-    shouldSetBadge: false,
+    shouldSetBadge: true,
   }),
 });
 
@@ -164,16 +166,24 @@ const ActionButton = ({
   onPress: () => void;
 }) => {
   return (
-    <TouchableOpacity
-      className="rounded-full h-12 w-12 flex justify-center items-center bg-transparent/20"
-      onPress={onPress}
+    <BlurView
+      className={cn(
+        "rounded-full h-12 w-12 flex justify-center items-center overflow-hidden",
+        Platform.OS === "android" && "bg-black/40",
+      )}
+      intensity={40}
     >
-      <Entypo
-        name={iconName}
-        size={24}
-        color={tailwindColors.primary.foreground}
-      />
-    </TouchableOpacity>
+      <TouchableOpacity
+        className="w-full h-full flex justify-center items-center"
+        onPress={onPress}
+      >
+        <Entypo
+          name={iconName}
+          size={24}
+          color={tailwindColors.primary.foreground}
+        />
+      </TouchableOpacity>
+    </BlurView>
   );
 };
 
