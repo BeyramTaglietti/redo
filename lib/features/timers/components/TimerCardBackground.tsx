@@ -6,27 +6,32 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-import { cn, tailwindColors } from "@/lib/utils";
+import { tailwindColors } from "@/lib/utils";
 
-const BACKDROP_COLOR = "#86EFAC";
+const DISABLED_COLOR = "#828583";
+const DESTRUCTIVE_COLOR = tailwindColors.destructive;
+
+type TimerCardBackgroundProps = {
+  timeLeft: number;
+  duration_ms: number;
+  isPaused: boolean;
+  timerBackgroundColor: string;
+};
 
 export const TimerCardBackground = memo(
   ({
     timeLeft,
     duration_ms,
     isPaused,
-  }: {
-    timeLeft: number;
-    duration_ms: number;
-    isPaused: boolean;
-  }) => {
+    timerBackgroundColor,
+  }: TimerCardBackgroundProps) => {
     const slidingViewState = useSharedValue({
       width: (timeLeft / (duration_ms / 1000)) * 100,
-      background: tailwindColors.primary.DEFAULT,
+      background: timerBackgroundColor,
     });
 
     const backdropViewState = useSharedValue({
-      background: BACKDROP_COLOR,
+      background: timerBackgroundColor,
     });
 
     const slidingViewStyle = useAnimatedStyle(() => {
@@ -42,47 +47,52 @@ export const TimerCardBackground = memo(
     const backdropViewStyle = useAnimatedStyle(() => {
       return {
         backgroundColor: withTiming(backdropViewState.value.background),
+        opacity: withTiming(0.6),
       };
     });
 
     useEffect(() => {
       slidingViewState.value = {
         width: (timeLeft / (duration_ms / 1000)) * 100,
-        background: tailwindColors.primary.DEFAULT,
+        background: timerBackgroundColor,
       };
 
       if (isPaused) {
         slidingViewState.value = {
           width: slidingViewState.value.width,
-          background: "#828583",
+          background: DISABLED_COLOR,
         };
         backdropViewState.value = {
-          background: "#D1D5DB",
+          background: DISABLED_COLOR,
         };
       } else {
         backdropViewState.value = {
-          background: BACKDROP_COLOR,
+          background: timerBackgroundColor,
         };
       }
 
       if (timeLeft <= 0) {
         slidingViewState.value = {
           width: 0,
-          background: tailwindColors.destructive,
+          background: DESTRUCTIVE_COLOR,
         };
         backdropViewState.value = {
-          background: tailwindColors.destructive,
+          background: DESTRUCTIVE_COLOR,
         };
       }
-    }, [duration_ms, timeLeft, isPaused, slidingViewState, backdropViewState]);
+    }, [
+      duration_ms,
+      timeLeft,
+      isPaused,
+      slidingViewState,
+      backdropViewState,
+      timerBackgroundColor,
+    ]);
 
     return (
       <>
         <Animated.View
-          className={cn(
-            "absolute bg-primary w-full h-full z-10 rounded-xl",
-            isPaused ? "bg-gray-400" : "",
-          )}
+          className="absolute w-full h-full z-10 rounded-xl"
           style={slidingViewStyle}
         />
         <Animated.View

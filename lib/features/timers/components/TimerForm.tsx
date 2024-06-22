@@ -4,7 +4,7 @@ import { router } from "expo-router";
 import { useCallback } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 
 import { useTimerNotifications } from "../hooks";
 import { TimerFormSchema, TimerFormValues } from "../validation";
@@ -13,6 +13,14 @@ import { RDButton, RDTextInput } from "@/lib/components";
 import { useVirtualKeyboard } from "@/lib/hooks";
 import { Timer, useTimersStore } from "@/lib/stores/timers";
 import { createUUID, tailwindColors } from "@/lib/utils";
+
+const AVAILABLE_COLORS = {
+  green: tailwindColors.primary.DEFAULT,
+  blue: "#3498db",
+  orange: "#e67230",
+  pink: "#f518c5",
+  purple: "#b511d6",
+};
 
 export const TimerForm = ({ timerId }: { timerId?: string }) => {
   const createTimer = useTimersStore((state) => state.createTimer);
@@ -37,6 +45,7 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
     resolver: zodResolver(TimerFormSchema),
     defaultValues: {
       title: currentTimer?.title || "",
+      backgroundColor: currentTimer?.background_color || AVAILABLE_COLORS.green,
     },
   });
 
@@ -83,6 +92,7 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
         notification_identifier: identifier,
         is_paused: false,
         paused_at: null,
+        background_color: data.backgroundColor,
       };
 
       if (timerId) {
@@ -170,6 +180,35 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
             </Text>
           </View>
         )}
+
+        <Controller
+          control={control}
+          name="backgroundColor"
+          render={({ field: { value, onChange } }) => (
+            <View className="flex flex-row justify-between">
+              {Object.entries(AVAILABLE_COLORS).map(([color, hex]) => (
+                <View
+                  className="flex flex-col justify-center items-center"
+                  style={{ gap: 6 }}
+                >
+                  <Pressable
+                    key={color}
+                    className="w-8 h-8 rounded-full"
+                    style={{ backgroundColor: hex }}
+                    onPress={() => onChange(hex)}
+                  />
+                  <View
+                    className="h-2 w-2 rounded-full"
+                    style={{
+                      backgroundColor: value === hex ? hex : "transparent",
+                    }}
+                  />
+                </View>
+              ))}
+            </View>
+          )}
+        />
+
         <RDButton
           title={t("app.create")}
           onPress={handleSubmit(handleTimerCreate)}

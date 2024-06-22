@@ -7,4 +7,5 @@ export type Timer = {
   notification_identifier: string;
   is_paused: boolean;
   paused_at: number | null;
+  background_color: string;
 };

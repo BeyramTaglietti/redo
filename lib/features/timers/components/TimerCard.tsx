@@ -80,7 +80,7 @@ export const TimerCard = ({
     }
   }, [isDragging, draggedItemState]);
 
-  if (!currentTimer.timeLeft) {
+  if (currentTimer.timeLeft === null) {
     return;
   }
 
@@ -96,7 +96,7 @@ export const TimerCard = ({
         }}
       >
         <Pressable
-          className="rounded-xl h-40 w-full relative overflow-hidden"
+          className="rounded-xl h-40 w-full relative overflow-hidden bg-white"
           onPress={() => {
             if (!isSliding) router.push(`/${timer.id}`);
           }}
@@ -106,6 +106,7 @@ export const TimerCard = ({
             timeLeft={currentTimer.timeLeft}
             duration_ms={timer.duration_ms}
             isPaused={timer.is_paused}
+            timerBackgroundColor={timer.background_color}
           />
           <View className="p-4 z-20 w-full h-full">
             <Text className="text-white font-bold text-xl">{timer.title}</Text>

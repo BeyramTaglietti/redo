@@ -24,6 +24,7 @@ export const TimersList = () => {
         containerStyle={{
           flex: 1,
         }}
+        showsVerticalScrollIndicator={false}
         data={timers}
         renderItem={({ item, drag, isActive }) => (
           <View className="my-2">

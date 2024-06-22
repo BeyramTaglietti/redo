@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import { createUUID, i18n } from "@/lib/utils";
+import { createUUID, i18n, tailwindColors } from "@/lib/utils";
 import { Timer } from "./timers.model";
 
 interface State {
@@ -28,6 +28,7 @@ const initialState: State = {
       notification_identifier: "",
       is_paused: false,
       paused_at: 0,
+      background_color: tailwindColors.primary.DEFAULT,
     },
   ],
 };

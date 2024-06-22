@@ -8,6 +8,7 @@ export const TimerFormSchema = z.object({
     .optional(),
   hours: z.coerce.number({ message: "Value must be a number" }).optional(),
   minutes: z.coerce.number({ message: "Value must be a number" }).optional(),
+  backgroundColor: z.string(),
 });
 
 export type TimerFormValues = z.infer<typeof TimerFormSchema>;
