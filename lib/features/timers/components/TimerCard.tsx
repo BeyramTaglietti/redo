@@ -1,13 +1,7 @@
 import { Entypo } from "@expo/vector-icons";
 import * as Notifications from "expo-notifications";
 import { router } from "expo-router";
-import {
-  ComponentProps,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { ComponentProps, useEffect, useMemo, useState } from "react";
 import {
   GestureResponderEvent,
   Platform,
@@ -23,14 +17,14 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 
-import { useTimerNotifications } from "../hooks";
 import { TimerCardBackground } from "./TimerCardBackground";
 
 import { Deletable } from "@/lib/components";
-import { Timer, useTimersStore } from "@/lib/stores/timers";
+import { Timer } from "@/lib/stores/timers";
 import { HapticVibrate, cn, tailwindColors } from "@/lib/utils";
 import { BlurView } from "expo-blur";
-import { calculateSecondsLeft, formatDurationFromMilliseconds } from "../utils";
+import { useTimer } from "../hooks";
+import { formatDurationFromMilliseconds } from "../utils";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -51,108 +45,17 @@ export const TimerCard = ({
   onLongPress,
   isDragging,
 }: TimerCardProps) => {
-  const deleteTimer = useTimersStore((state) => state.deleteTimer);
-  const postPoneTimer = useTimersStore((state) => state.postPoneTimer);
-  const editTimer = useTimersStore((state) => state.editTimer);
+  const currentTimer = useTimer(timer);
 
   const [isSliding, setIsSliding] = useState(false);
 
-  const { createTimerNotification, removeTimerNotification } =
-    useTimerNotifications();
-
-  const [timeLeft, setTimeLeft] = useState<number>(
-    calculateSecondsLeft({
-      updated_at: timer.updated_at,
-      duration_ms: timer.duration_ms,
-    }),
-  );
-
-  useEffect(() => {
-    if (timer.is_paused) {
-      return;
-    }
-
-    setTimeLeft(
-      calculateSecondsLeft({
-        updated_at: timer.updated_at,
-        duration_ms: timer.duration_ms,
-      }),
-    );
-
-    const interval = setInterval(() => {
-      const left = calculateSecondsLeft({
-        updated_at: timer.updated_at,
-        duration_ms: timer.duration_ms,
-      });
-
-      if (left <= 0) {
-        clearInterval(interval);
-      }
-
-      setTimeLeft(left);
-    }, 1000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [timer.updated_at, timer.id, timer.is_paused, timer.duration_ms]);
-
-  const handleDelete = useCallback(() => {
-    removeTimerNotification(timer.notification_identifier);
-    deleteTimer(timer.id);
-  }, [deleteTimer, removeTimerNotification, timer]);
-
-  const handlePostPone = useCallback(async () => {
-    removeTimerNotification(timer.notification_identifier);
-
-    const identifier = await createTimerNotification(
-      timer.title,
-      timer.duration_ms,
-    );
-
-    if (!identifier) {
-      return;
-    }
-
-    postPoneTimer(timer.id, identifier);
-  }, [removeTimerNotification, timer, createTimerNotification, postPoneTimer]);
-
-  const handlePause = useCallback(() => {
-    removeTimerNotification(timer.notification_identifier);
-    editTimer({ ...timer, is_paused: true, paused_at: new Date().valueOf() });
-  }, [editTimer, removeTimerNotification, timer]);
-
-  const handleResume = useCallback(async () => {
-    if (!timer.paused_at) {
-      return;
-    }
-
-    const newVals = {
-      updated_at: new Date().valueOf() - timer.paused_at + timer.updated_at,
-      created_at: new Date().valueOf() - timer.paused_at,
-    };
-
-    const newIdentifier = await createTimerNotification(
-      timer.title,
-      calculateSecondsLeft({
-        updated_at: newVals.updated_at,
-        duration_ms: timer.duration_ms,
-      }) * 1000,
-    );
-
-    editTimer({
-      ...timer,
-      is_paused: false,
-      paused_at: null,
-      updated_at: newVals.updated_at,
-      created_at: newVals.created_at,
-      notification_identifier: newIdentifier ?? "",
-    });
-  }, [createTimerNotification, editTimer, timer]);
-
   const formattedTimeLeft = useMemo(() => {
-    return formatDurationFromMilliseconds(timeLeft * 1000);
-  }, [timeLeft]);
+    if (!currentTimer.timeLeft) {
+      return;
+    }
+
+    return formatDurationFromMilliseconds(currentTimer.timeLeft * 1000);
+  }, [currentTimer.timeLeft]);
 
   const draggedItemState = useSharedValue({
     margin: 0,
@@ -177,13 +80,17 @@ export const TimerCard = ({
     }
   }, [isDragging, draggedItemState]);
 
+  if (!currentTimer.timeLeft) {
+    return;
+  }
+
   return (
     <Animated.View
       className={cn(isDragging && "opacity-60")}
       style={draggedItemStyle}
     >
       <Deletable
-        onDelete={handleDelete}
+        onDelete={currentTimer.remove}
         onSlideAction={(sliding) => {
           setIsSliding(sliding);
         }}
@@ -196,29 +103,34 @@ export const TimerCard = ({
           onLongPress={onLongPress}
         >
           <TimerCardBackground
-            timeLeft={timeLeft}
+            timeLeft={currentTimer.timeLeft}
             duration_ms={timer.duration_ms}
             isPaused={timer.is_paused}
           />
           <View className="p-4 z-20 w-full h-full">
             <Text className="text-white font-bold text-xl">{timer.title}</Text>
             <Text className="text-white font-bold text-xl">
-              {timeLeft <= 0 ? 0 : formattedTimeLeft}
+              {currentTimer.timeLeft <= 0 ? 0 : formattedTimeLeft}
             </Text>
             <View
               className="flex flex-row flex-1 justify-end items-end"
               style={{ gap: 16 }}
             >
-              {timeLeft > 0 && (
+              {currentTimer.timeLeft > 0 && (
                 <ActionButton
                   iconName={
                     timer.is_paused ? "controller-play" : "controller-paus"
                   }
-                  onPress={timer.is_paused ? handleResume : handlePause}
+                  onPress={
+                    timer.is_paused ? currentTimer.resume : currentTimer.pause
+                  }
                 />
               )}
               {!timer.is_paused && (
-                <ActionButton iconName="cycle" onPress={handlePostPone} />
+                <ActionButton
+                  iconName="cycle"
+                  onPress={currentTimer.postPone}
+                />
               )}
             </View>
           </View>

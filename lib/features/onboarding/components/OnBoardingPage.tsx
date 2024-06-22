@@ -3,8 +3,8 @@ import { useSettingsStore } from "@/lib/stores/settings";
 import LottieView from "lottie-react-native";
 import { useTranslation } from "react-i18next";
 
-import { ComponentProps, useCallback, useMemo, useRef, useState } from "react";
-import { DimensionValue, Dimensions, View } from "react-native";
+import { ComponentProps, useCallback, useRef, useState } from "react";
+import { DimensionValue, View, useWindowDimensions } from "react-native";
 
 import done_animation from "@/assets/lottie/done_animation.json";
 import notification_animation from "@/assets/lottie/notification_animation.json";
@@ -17,9 +17,7 @@ import * as Notifications from "expo-notifications";
 export const OnBoardingPage = () => {
   const { t } = useTranslation();
 
-  const { width } = useMemo(() => {
-    return Dimensions.get("window");
-  }, []);
+  const { width } = useWindowDimensions();
 
   const carouselRef = useRef<CarouselRef | null>(null);
   const [screen, setScreen] = useState(0);
