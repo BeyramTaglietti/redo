@@ -97,10 +97,7 @@ export const Deletable = memo(
           runOnJS(triggerHapticFeedback)("Medium");
         } else {
           runOnJS(triggerHapticFeedback)("Light");
-          offsetShareValue.value = withTiming(event.translationX, {
-            duration: 200,
-            easing: Easing.out(Easing.cubic),
-          });
+          offsetShareValue.value = event.translationX;
         }
       })
       .onFinalize((event) => {
