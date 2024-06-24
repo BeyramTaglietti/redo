@@ -57,38 +57,31 @@ export const TimerCard = ({
     return formatDurationFromMilliseconds(currentTimer.timeLeft * 1000);
   }, [currentTimer.timeLeft]);
 
-  const draggedItemState = useSharedValue({
-    margin: 0,
-  });
+  const draggedItemMargin = useSharedValue(0);
+
   const draggedItemStyle = useAnimatedStyle(() => {
     return {
-      marginHorizontal: draggedItemState.value.margin,
+      marginHorizontal: draggedItemMargin.value,
+      opacity: isDragging && Platform.OS === "ios" ? 0.8 : 1,
     };
   });
 
   useEffect(() => {
     if (isDragging) {
       HapticVibrate("Medium");
-      draggedItemState.value = {
-        margin: withSpring(32),
-      };
+      draggedItemMargin.value = withSpring(32);
     } else {
       HapticVibrate("Light");
-      draggedItemState.value = {
-        margin: withClamp({ min: 0 }, withSpring(0)),
-      };
+      draggedItemMargin.value = withClamp({ min: 0 }, withSpring(0));
     }
-  }, [isDragging, draggedItemState]);
+  }, [isDragging, draggedItemMargin]);
 
   if (currentTimer.timeLeft === null) {
-    return;
+    return <></>;
   }
 
   return (
-    <Animated.View
-      className={cn(isDragging && "opacity-60")}
-      style={draggedItemStyle}
-    >
+    <Animated.View style={draggedItemStyle}>
       <Deletable
         onDelete={currentTimer.remove}
         onSlideAction={(sliding) => {
