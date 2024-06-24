@@ -190,9 +190,9 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
                 <View
                   className="flex flex-col justify-center items-center"
                   style={{ gap: 6 }}
+                  key={color}
                 >
                   <Pressable
-                    key={color}
                     className="w-8 h-8 rounded-full"
                     style={{ backgroundColor: hex }}
                     onPress={() => onChange(hex)}

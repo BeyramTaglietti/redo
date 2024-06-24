@@ -1,0 +1,24 @@
+{
+  "cli": {
+    "version": ">= 9.0.10"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {}
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "appleId": "beyramtaglietti@icloud.com",
+        "ascAppId": "6478082618",
+        "appleTeamId": "8JWLFW3496"
+      }
+    }
+  }
+}

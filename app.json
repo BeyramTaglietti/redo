@@ -1,28 +1,46 @@
 {
   "expo": {
-    "name": "redo",
+    "name": "Redo",
     "slug": "redo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "com.beyramtaglietti.redo",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
+      "buildNumber": "1",
       "supportsTablet": true,
-      "bundleIdentifier": "com.beyramtaglietti.redo"
+      "bundleIdentifier": "com.beyramtaglietti.redo",
+      "splash": {
+        "image": "./assets/images/splash.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#ffffff",
+        "dark": {
+          "resizeMode": "contain",
+          "backgroundColor": "#000000"
+        }
+      }
     },
     "android": {
+      "versionCode": 7,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "splash": {
+        "image": "./assets/images/splash.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#ffffff",
+        "dark": {
+          "resizeMode": "contain",
+          "backgroundColor": "#000000"
+        }
       },
       "package": "com.beyramtaglietti.redo"
     },
@@ -31,13 +49,17 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": [
-      "expo-router",
-      "expo-localization",
-      "expo-font"
-    ],
+    "plugins": ["expo-router", "expo-localization", "expo-font"],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "1f1cabb4-07fa-4753-9c64-83ebbcb576a7"
+      }
     }
   }
 }
