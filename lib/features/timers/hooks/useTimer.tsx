@@ -1,3 +1,4 @@
+import { AnalyticsEvents, useAnalytics } from "@/lib/hooks";
 import { Timer, useTimersStore } from "@/lib/stores/timers";
 import { useCallback, useEffect, useState } from "react";
 import { calculateSecondsLeft } from "../utils";
@@ -6,7 +7,6 @@ import { useTimerNotifications } from "./useTimerNotifications";
 type useTimerType = (timer: Timer) => {
   postPone: () => Promise<void>;
   remove: () => void;
-  edit: () => void;
   pause: () => void;
   resume: () => Promise<void>;
   timeLeft: number | null;
@@ -15,6 +15,7 @@ export const useTimer: useTimerType = (timer) => {
   const deleteTimer = useTimersStore((state) => state.deleteTimer);
   const postPoneTimer = useTimersStore((state) => state.postPoneTimer);
   const editTimer = useTimersStore((state) => state.editTimer);
+  const analytics = useAnalytics();
 
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
 
@@ -65,6 +66,7 @@ export const useTimer: useTimerType = (timer) => {
     useTimerNotifications();
 
   const postPone = useCallback(async () => {
+    analytics.track(AnalyticsEvents.REDO_POSTPONED);
     removeTimerNotification(timer.notification_identifier);
 
     const identifier = await createTimerNotification(
@@ -85,17 +87,20 @@ export const useTimer: useTimerType = (timer) => {
     timer.id,
     timer.notification_identifier,
     timer.title,
+    analytics,
   ]);
 
   const remove = useCallback(() => {
+    analytics.track(AnalyticsEvents.REDO_DELETED);
     removeTimerNotification(timer.notification_identifier);
     deleteTimer(timer.id);
-  }, [deleteTimer, removeTimerNotification, timer]);
+  }, [deleteTimer, removeTimerNotification, timer, analytics]);
 
   const pause = useCallback(() => {
+    analytics.track(AnalyticsEvents.REDO_PAUSED);
     removeTimerNotification(timer.notification_identifier);
     editTimer({ ...timer, is_paused: true, paused_at: new Date().valueOf() });
-  }, [editTimer, removeTimerNotification, timer]);
+  }, [editTimer, removeTimerNotification, timer, analytics]);
 
   const resume = useCallback(async () => {
     if (!timer.paused_at) {
@@ -125,12 +130,9 @@ export const useTimer: useTimerType = (timer) => {
     });
   }, [createTimerNotification, editTimer, timer]);
 
-  const edit = () => {};
-
   return {
     postPone,
     remove,
-    edit,
     pause,
     resume,
     timeLeft,

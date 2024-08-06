@@ -10,7 +10,7 @@ import { useTimerNotifications } from "../hooks";
 import { TimerFormSchema, TimerFormValues } from "../validation";
 
 import { RDButton, RDTextInput } from "@/lib/components";
-import { useVirtualKeyboard } from "@/lib/hooks";
+import { AnalyticsEvents, useAnalytics, useVirtualKeyboard } from "@/lib/hooks";
 import { Timer, useTimersStore } from "@/lib/stores/timers";
 import { createUUID, tailwindColors } from "@/lib/utils";
 
@@ -28,6 +28,8 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
   const currentTimer = useTimersStore((state) =>
     state.timers.find((t) => t.id === timerId),
   );
+
+  const analytics = useAnalytics();
 
   const { t } = useTranslation();
 
@@ -98,6 +100,10 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
       if (timerId) {
         editTimer(timer);
       } else {
+        analytics.track(AnalyticsEvents.REDO_CREATED, {
+          duration: duration,
+          title: data.title,
+        });
         createTimer(timer);
       }
 
@@ -112,6 +118,7 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
       t,
       editTimer,
       createTimer,
+      analytics,
     ],
   );
 

@@ -1,4 +1,6 @@
 import { Slot } from "expo-router";
+import { PostHogProvider } from "posthog-react-native";
+
 import React, { useEffect } from "react";
 
 import { useSettingsStore } from "@/lib/stores/settings";
@@ -18,7 +20,16 @@ const RootLayout = () => {
     );
   }, [currentLanguage, colorScheme]);
 
-  return <Slot />;
+  return (
+    <PostHogProvider
+      apiKey={process.env.EXPO_PUBLIC_POSTHOG_APIKEY}
+      options={{
+        host: "https://eu.i.posthog.com",
+      }}
+    >
+      <Slot />
+    </PostHogProvider>
+  );
 };
 
 export default RootLayout;
