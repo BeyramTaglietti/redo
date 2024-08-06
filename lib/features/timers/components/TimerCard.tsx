@@ -151,7 +151,10 @@ const ActionButton = ({
     >
       <TouchableOpacity
         className="w-full h-full flex justify-center items-center"
-        onPress={onPress}
+        onPress={() => {
+          HapticVibrate("Light");
+          onPress();
+        }}
       >
         <Entypo
           name={iconName}

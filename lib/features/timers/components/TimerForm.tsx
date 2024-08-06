@@ -12,7 +12,7 @@ import { TimerFormSchema, TimerFormValues } from "../validation";
 import { RDButton, RDTextInput } from "@/lib/components";
 import { AnalyticsEvents, useAnalytics, useVirtualKeyboard } from "@/lib/hooks";
 import { Timer, useTimersStore } from "@/lib/stores/timers";
-import { createUUID, tailwindColors } from "@/lib/utils";
+import { createUUID, HapticVibrate, tailwindColors } from "@/lib/utils";
 
 const AVAILABLE_COLORS = {
   green: tailwindColors.primary.DEFAULT,
@@ -202,7 +202,10 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
                   <Pressable
                     className="w-8 h-8 rounded-full"
                     style={{ backgroundColor: hex }}
-                    onPress={() => onChange(hex)}
+                    onPress={() => {
+                      HapticVibrate("Light");
+                      onChange(hex);
+                    }}
                   />
                   <View
                     className="h-2 w-2 rounded-full"
