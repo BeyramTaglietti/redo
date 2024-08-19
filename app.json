@@ -2,7 +2,7 @@
   "expo": {
     "name": "Redo",
     "slug": "redo",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "com.beyramtaglietti.redo",
@@ -14,7 +14,7 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "buildNumber": "1",
+      "buildNumber": "20240819",
       "supportsTablet": true,
       "bundleIdentifier": "com.beyramtaglietti.redo",
       "splash": {
@@ -28,7 +28,7 @@
       }
     },
     "android": {
-      "versionCode": 7,
+      "versionCode": 20240819,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
