@@ -40,4 +40,27 @@ const formatDurationFromMilliseconds: formatDurationFromMillisecondsType = (
   return parts.splice(0, 2).join(" ");
 };
 
-export { calculateSecondsLeft, formatDurationFromMilliseconds };
+type durationMSToTimerType = (ms: number) => {
+  days: number;
+  hours: number;
+  minutes: number;
+};
+
+const durationMSToTimer: durationMSToTimerType = (ms) => {
+  let seconds = Math.floor(ms / 1000);
+  let minutes = Math.floor(seconds / 60);
+  let hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  seconds = seconds % 60;
+  minutes = minutes % 60;
+  hours = hours % 24;
+
+  return { days, hours, minutes };
+};
+
+export {
+  calculateSecondsLeft,
+  durationMSToTimer,
+  formatDurationFromMilliseconds,
+};

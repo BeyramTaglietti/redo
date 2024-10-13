@@ -13,6 +13,7 @@ import { RDButton, RDTextInput } from "@/lib/components";
 import { AnalyticsEvents, useAnalytics, useVirtualKeyboard } from "@/lib/hooks";
 import { Timer, useTimersStore } from "@/lib/stores/timers";
 import { createUUID, HapticVibrate, tailwindColors } from "@/lib/utils";
+import { durationMSToTimer } from "../utils";
 
 const AVAILABLE_COLORS = {
   green: tailwindColors.primary.DEFAULT,
@@ -48,6 +49,15 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
     defaultValues: {
       title: currentTimer?.title || "",
       backgroundColor: currentTimer?.background_color || AVAILABLE_COLORS.green,
+      days: currentTimer?.duration_ms
+        ? durationMSToTimer(currentTimer.duration_ms).days
+        : undefined,
+      hours: currentTimer?.duration_ms
+        ? durationMSToTimer(currentTimer.duration_ms).hours
+        : undefined,
+      minutes: currentTimer?.duration_ms
+        ? durationMSToTimer(currentTimer.duration_ms).minutes
+        : undefined,
     },
   });
 
