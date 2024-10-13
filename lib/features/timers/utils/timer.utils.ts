@@ -41,9 +41,9 @@ const formatDurationFromMilliseconds: formatDurationFromMillisecondsType = (
 };
 
 type durationMSToTimerType = (ms: number) => {
-  days: number;
-  hours: number;
-  minutes: number;
+  days: number | null;
+  hours: number | null;
+  minutes: number | null;
 };
 
 const durationMSToTimer: durationMSToTimerType = (ms) => {
@@ -56,7 +56,11 @@ const durationMSToTimer: durationMSToTimerType = (ms) => {
   minutes = minutes % 60;
   hours = hours % 24;
 
-  return { days, hours, minutes };
+  return {
+    days: days === 0 ? null : days,
+    hours: hours === 0 ? null : hours,
+    minutes: minutes === 0 ? null : minutes,
+  };
 };
 
 export {

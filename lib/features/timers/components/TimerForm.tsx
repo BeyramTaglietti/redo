@@ -50,13 +50,13 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
       title: currentTimer?.title || "",
       backgroundColor: currentTimer?.background_color || AVAILABLE_COLORS.green,
       days: currentTimer?.duration_ms
-        ? durationMSToTimer(currentTimer.duration_ms).days
+        ? durationMSToTimer(currentTimer.duration_ms).days ?? undefined
         : undefined,
       hours: currentTimer?.duration_ms
-        ? durationMSToTimer(currentTimer.duration_ms).hours
+        ? durationMSToTimer(currentTimer.duration_ms).hours ?? undefined
         : undefined,
       minutes: currentTimer?.duration_ms
-        ? durationMSToTimer(currentTimer.duration_ms).minutes
+        ? durationMSToTimer(currentTimer.duration_ms).minutes ?? undefined
         : undefined,
     },
   });

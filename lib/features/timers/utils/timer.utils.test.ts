@@ -55,10 +55,10 @@ describe("Timer utils", () => {
       const results = testValues.map(durationMSToTimer);
 
       expect(results).toEqual([
-        { days: 0, hours: 0, minutes: 0 },
-        { days: 0, hours: 0, minutes: 1 },
-        { days: 0, hours: 1, minutes: 0 },
-        { days: 1, hours: 0, minutes: 0 },
+        { days: null, hours: null, minutes: null },
+        { days: null, hours: null, minutes: 1 },
+        { days: null, hours: 1, minutes: null },
+        { days: 1, hours: null, minutes: null },
       ]);
     });
   });
