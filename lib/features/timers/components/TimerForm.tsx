@@ -230,7 +230,7 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
         />
 
         <RDButton
-          title={t("app.create")}
+          title={t(timerId ? "app.edit" : "app.create")}
           onPress={handleSubmit(handleTimerCreate)}
         />
       </View>

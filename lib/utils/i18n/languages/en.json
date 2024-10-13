@@ -1,7 +1,7 @@
 {
   "app": {
     "create": "Create",
-
+    "edit": "Edit",
     "day": "day",
     "day_plural": "days",
     "hour": "hour",
