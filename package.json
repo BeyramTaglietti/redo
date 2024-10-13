@@ -11,7 +11,9 @@
     "test": "jest",
     "test:w": "jest --watchAll",
     "prepare": "husky",
-    "doctor": "npx expo-doctor"
+    "doctor": "npx expo-doctor",
+    "build:ios": "eas build --platform ios",
+    "publish:ios": "eas submit --platform ios"
   },
   "jest": {
     "preset": "jest-expo"
