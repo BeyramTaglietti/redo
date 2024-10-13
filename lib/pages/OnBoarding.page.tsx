@@ -41,7 +41,7 @@ export const OnBoardingPage = () => {
   }, [goToNextPage]);
 
   if (onBoardingCompleted) {
-    return <Redirect href="redos" />;
+    return <Redirect href="/(tabs)/redos" />;
   }
 
   return (
@@ -91,7 +91,7 @@ export const OnBoardingPage = () => {
             title={t("onboarding.complete")}
             onPress={() => {
               setOnBoardingCompleted();
-              router.replace("redos");
+              router.replace("/(tabs)/redos");
             }}
           />
         ) : null}

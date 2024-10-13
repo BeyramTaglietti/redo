@@ -1,8 +1,7 @@
+import { OnBoardingPage } from "@/lib/pages";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { OnBoardingPage } from "@/lib/features/onboarding";
-
-export default function OnBoardingScreen() {
+export default function OnBoardingRoute() {
   return (
     <SafeAreaView>
       <OnBoardingPage />

@@ -1,14 +1,9 @@
 import { useLocalSearchParams } from "expo-router";
-import { View } from "react-native";
 
-import { TimerForm } from "@/lib/features/timers";
+import { TimerDetailPage } from "@/lib/pages";
 
-export default function CreateTimerScreen() {
+export default function CreateTimerRoute() {
   const { timer_id } = useLocalSearchParams<{ timer_id: string }>();
 
-  return (
-    <View className="p-4" style={{ gap: 16 }}>
-      <TimerForm timerId={timer_id} />
-    </View>
-  );
+  return <TimerDetailPage timer_id={timer_id} />;
 }

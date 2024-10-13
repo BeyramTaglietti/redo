@@ -1,5 +1,6 @@
 import {
   calculateSecondsLeft,
+  durationMSToTimer,
   formatDurationFromMilliseconds,
 } from "./timer.utils";
 
@@ -44,6 +45,21 @@ describe("Timer utils", () => {
       const result = formatDurationFromMilliseconds(123456789);
 
       expect(result).toBe("1 day 10 hours");
+    });
+  });
+
+  describe("durationMSToTimer", () => {
+    it("should return the correct timer object", () => {
+      const testValues = [1000, 1000 * 60, 1000 * 60 * 60, 1000 * 60 * 60 * 24];
+
+      const results = testValues.map(durationMSToTimer);
+
+      expect(results).toEqual([
+        { days: 0, hours: 0, minutes: 0 },
+        { days: 0, hours: 0, minutes: 1 },
+        { days: 0, hours: 1, minutes: 0 },
+        { days: 1, hours: 0, minutes: 0 },
+      ]);
     });
   });
 });

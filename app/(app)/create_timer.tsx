@@ -1,11 +1,5 @@
-import { View } from "react-native";
+import { TimerDetailPage } from "@/lib/pages";
 
-import { TimerForm } from "@/lib/features/timers";
-
-export default function CreateTimerScreen() {
-  return (
-    <View className="p-4" style={{ gap: 16 }}>
-      <TimerForm />
-    </View>
-  );
+export default function CreateTimerRoute() {
+  return <TimerDetailPage />;
 }

@@ -1,11 +1,5 @@
-import { View } from "react-native";
+import { LanguagesPage } from "@/lib/pages";
 
-import { LanguagesList } from "@/lib/features/settings";
-
-export default function LanguagesScreen() {
-  return (
-    <View className="p-4">
-      <LanguagesList />
-    </View>
-  );
+export default function LanguagesRoute() {
+  return <LanguagesPage />;
 }
