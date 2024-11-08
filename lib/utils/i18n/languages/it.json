@@ -19,10 +19,21 @@
   "timers": {
     "create_timer": "Crea un Redo",
     "redo_title": "Titolo Redo",
-    "duration_required": "La durata è obbligatoria",
+    "timer_duration": "Durata del timer",
     "notification": {
       "title": "Oh no! 🚨",
       "description": "{{title}} è scaduto!"
+    },
+    "snooze": "Posticipa",
+    "snooze_duration": "Durata tasto posticipa (minuti)",
+    "validation": {
+      "required_title": "Il titolo è obbligatorio",
+      "required_duration": "La durata è obbligatoria",
+      "max_days": "Solo un massimo di {{days}} giorni è consentito",
+      "max_hours": "Solo un massimo di {{hours}} ore è consentito",
+      "max_minutes": "Solo un massimo di {{minutes}} minuti è consentito",
+      "min_snooze": "La durata dell'azione posticipa deve essere almeno di {{minutes}} minuti",
+      "max_snooze": "La durata dell'azione posticipa deve essere al massimo di {{hours}} ore"
     }
   },
   "settings": {

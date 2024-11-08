@@ -19,10 +19,11 @@ import Animated, {
 
 import { TimerCardBackground } from "./TimerCardBackground";
 
-import { Deletable } from "@/lib/components";
+import { Deletable, RDText } from "@/lib/components";
 import { Timer } from "@/lib/stores/timers";
 import { HapticVibrate, cn, tailwindColors } from "@/lib/utils";
 import { BlurView } from "expo-blur";
+import { useTranslation } from "react-i18next";
 import { useTimer } from "../hooks";
 import { formatDurationFromMilliseconds } from "../utils";
 
@@ -45,6 +46,8 @@ export const TimerCard = ({
   onLongPress,
   isDragging,
 }: TimerCardProps) => {
+  const { t } = useTranslation();
+
   const currentTimer = useTimer(timer);
 
   const [isSliding, setIsSliding] = useState(false);
@@ -110,6 +113,12 @@ export const TimerCard = ({
               className="flex flex-row flex-1 justify-end items-end"
               style={{ gap: 16 }}
             >
+              {timer.snooze_duration_ms && (
+                <ActionButton
+                  onPress={() => currentTimer.postPone(true)}
+                  label={t("timers.snooze")}
+                />
+              )}
               {currentTimer.timeLeft > 0 && (
                 <ActionButton
                   iconName={
@@ -137,20 +146,23 @@ export const TimerCard = ({
 const ActionButton = ({
   iconName,
   onPress,
+  label,
 }: {
-  iconName: ComponentProps<typeof Entypo>["name"];
+  iconName?: ComponentProps<typeof Entypo>["name"];
   onPress: () => void;
+  label?: string;
 }) => {
   return (
     <BlurView
       className={cn(
         "rounded-full h-12 w-12 flex justify-center items-center overflow-hidden",
         Platform.OS === "android" && "bg-black/40",
+        label && "w-28",
       )}
       intensity={40}
     >
       <TouchableOpacity
-        className="w-full h-full flex justify-center items-center"
+        className="w-full h-full flex flex-row justify-center items-center"
         onPress={() => {
           HapticVibrate("Light");
           onPress();
@@ -161,6 +173,7 @@ const ActionButton = ({
           size={24}
           color={tailwindColors.primary.foreground}
         />
+        <RDText className="text-base">{label}</RDText>
       </TouchableOpacity>
     </BlurView>
   );

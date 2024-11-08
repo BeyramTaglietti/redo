@@ -13,7 +13,11 @@ interface Actions {
   createTimer: (timer: Timer) => void;
   editTimer: (timer: Timer) => void;
   deleteTimer: (id: string) => void;
-  postPoneTimer: (id: string, notificationIdentifier: string) => void;
+  postPoneTimer: (
+    id: string,
+    notificationIdentifier: string,
+    updateAt: number,
+  ) => void;
   reorderTimers: (timers: Timer[]) => void;
 }
 
@@ -22,13 +26,14 @@ const initialState: State = {
     {
       id: createUUID(),
       title: i18n.t("onboarding.slide_to_close"),
-      duration_ms: 1000 * 60 * 5,
+      duration_ms: 1000 * 60 * 5, // 5 minutes
       created_at: new Date().valueOf(),
       updated_at: new Date().valueOf(),
       notification_identifier: "",
       is_paused: false,
       paused_at: 0,
       background_color: tailwindColors.primary.DEFAULT,
+      snooze_duration_ms: 1000 * 60 * 5, // 5 minutes
     },
   ],
 };
@@ -49,13 +54,13 @@ export const useTimersStore = create<State & Actions>()(
         set((state) => ({
           timers: state.timers.filter((timer) => timer.id !== id),
         })),
-      postPoneTimer: (id, notificationIdentifier) =>
+      postPoneTimer: (id, notificationIdentifier, updateAt) =>
         set((state) => ({
           timers: state.timers.map((timer) =>
             timer.id === id
               ? {
                   ...timer,
-                  updated_at: new Date().valueOf(),
+                  updated_at: updateAt,
                   notification_identifier: notificationIdentifier,
                 }
               : timer,

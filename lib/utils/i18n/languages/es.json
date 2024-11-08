@@ -19,10 +19,21 @@
   "timers": {
     "create_timer": "Crear un Redo",
     "redo_title": "Título de Redo",
-    "duration_required": "Se requiere duración",
+    "timer_duration": "Duración del temporizador",
     "notification": {
       "title": "¡Oh no! 🚨",
       "description": "¡{{title}} ha expirado!"
+    },
+    "snooze": "Posticipa",
+    "snooze_duration": "Duración del botón de postergación (minutos)",
+    "validation": {
+      "required_title": "El título es obligatorio",
+      "required_duration": "La duración es obligatoria",
+      "max_days": "Solo se permite un máximo de {{days}} días",
+      "max_hours": "Solo se permite un máximo de {{hours}} horas",
+      "max_minutes": "Solo se permite un máximo de {{minutes}} minutos",
+      "min_snooze": "La duración de la acción de postergación debe ser de al menos {{minutes}} minutos",
+      "max_snooze": "La duración de la acción de postergación debe ser de como máximo {{hours}} horas"
     }
   },
   "settings": {

@@ -8,4 +8,5 @@ export type Timer = {
   is_paused: boolean;
   paused_at: number | null;
   background_color: string;
+  snooze_duration_ms?: number;
 };

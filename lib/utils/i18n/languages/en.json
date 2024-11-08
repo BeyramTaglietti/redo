@@ -19,10 +19,21 @@
   "timers": {
     "create_timer": "Create a Redo",
     "redo_title": "Redo's title",
-    "duration_required": "Duration is required",
+    "timer_duration": "Timer's duration",
     "notification": {
       "title": "Oh no! 🚨",
       "description": "{{title}} has expired!"
+    },
+    "snooze": "Snooze",
+    "snooze_duration": "Snooze button duration (minutes)",
+    "validation": {
+      "required_title": "Title is required",
+      "required_duration": "Duration is required",
+      "max_days": "Only a max of {{days}} days is allowed",
+      "max_hours": "Only a max of {{hours}} hours is allowed",
+      "max_minutes": "Only a max of {{minutes}} minutes is allowed",
+      "min_snooze": "Snooze duration must be at least {{minutes}} minutes",
+      "max_snooze": "Snooze duration must be at most {{hours}} hours"
     }
   },
   "settings": {

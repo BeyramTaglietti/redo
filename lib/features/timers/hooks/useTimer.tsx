@@ -5,7 +5,7 @@ import { calculateSecondsLeft } from "../utils";
 import { useTimerNotifications } from "./useTimerNotifications";
 
 type useTimerType = (timer: Timer) => {
-  postPone: () => Promise<void>;
+  postPone: (isSnoozeAction?: boolean) => Promise<void>;
   remove: () => void;
   pause: () => void;
   resume: () => Promise<void>;
@@ -65,30 +65,52 @@ export const useTimer: useTimerType = (timer) => {
   const { createTimerNotification, removeTimerNotification } =
     useTimerNotifications();
 
-  const postPone = useCallback(async () => {
-    analytics.track(AnalyticsEvents.REDO_POSTPONED);
-    removeTimerNotification(timer.notification_identifier);
+  const postPone = useCallback(
+    async (isSnoozeAction = false) => {
+      analytics.track(AnalyticsEvents.REDO_POSTPONED);
+      removeTimerNotification(timer.notification_identifier);
 
-    const identifier = await createTimerNotification(
+      let updatedAt: number = new Date().valueOf();
+
+      if (isSnoozeAction && timer.snooze_duration_ms) {
+        const timerIsOver =
+          new Date().valueOf() - timer.duration_ms >= timer.updated_at;
+
+        updatedAt =
+          timerIsOver || !timer.updated_at
+            ? new Date().valueOf() - timer.duration_ms
+            : timer.updated_at;
+
+        updatedAt = updatedAt + timer.snooze_duration_ms;
+      }
+
+      const identifier = await createTimerNotification(
+        timer.title,
+        calculateSecondsLeft({
+          updated_at: updatedAt,
+          duration_ms: timer.duration_ms,
+        }) * 1000,
+      );
+
+      if (!identifier) {
+        return;
+      }
+
+      postPoneTimer(timer.id, identifier, updatedAt);
+    },
+    [
+      analytics,
+      removeTimerNotification,
+      timer.notification_identifier,
       timer.title,
       timer.duration_ms,
-    );
-
-    if (!identifier) {
-      return;
-    }
-
-    postPoneTimer(timer.id, identifier);
-  }, [
-    createTimerNotification,
-    postPoneTimer,
-    removeTimerNotification,
-    timer.duration_ms,
-    timer.id,
-    timer.notification_identifier,
-    timer.title,
-    analytics,
-  ]);
+      timer.id,
+      timer.updated_at,
+      timer.snooze_duration_ms,
+      createTimerNotification,
+      postPoneTimer,
+    ],
+  );
 
   const remove = useCallback(() => {
     analytics.track(AnalyticsEvents.REDO_DELETED);

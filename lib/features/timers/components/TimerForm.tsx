@@ -9,10 +9,10 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { useTimerNotifications } from "../hooks";
 import { TimerFormSchema, TimerFormValues } from "../validation";
 
-import { RDButton, RDTextInput } from "@/lib/components";
+import { RDButton, RDText, RDTextInput } from "@/lib/components";
 import { AnalyticsEvents, useAnalytics, useVirtualKeyboard } from "@/lib/hooks";
 import { Timer, useTimersStore } from "@/lib/stores/timers";
-import { createUUID, HapticVibrate, tailwindColors } from "@/lib/utils";
+import { cn, createUUID, HapticVibrate, tailwindColors } from "@/lib/utils";
 import { durationMSToTimer } from "../utils";
 
 const AVAILABLE_COLORS = {
@@ -50,14 +50,17 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
       title: currentTimer?.title || "",
       backgroundColor: currentTimer?.background_color || AVAILABLE_COLORS.green,
       days: currentTimer?.duration_ms
-        ? durationMSToTimer(currentTimer.duration_ms).days ?? undefined
+        ? (durationMSToTimer(currentTimer.duration_ms).days ?? undefined)
         : undefined,
       hours: currentTimer?.duration_ms
-        ? durationMSToTimer(currentTimer.duration_ms).hours ?? undefined
+        ? (durationMSToTimer(currentTimer.duration_ms).hours ?? undefined)
         : undefined,
       minutes: currentTimer?.duration_ms
-        ? durationMSToTimer(currentTimer.duration_ms).minutes ?? undefined
+        ? (durationMSToTimer(currentTimer.duration_ms).minutes ?? undefined)
         : undefined,
+      snoozeDurationMinutes: currentTimer?.snooze_duration_ms
+        ? currentTimer.snooze_duration_ms / 1000 / 60
+        : 5,
     },
   });
 
@@ -68,15 +71,15 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
       if (!data.days && !data.hours && !data.minutes) {
         setError("days", {
           type: "manual",
-          message: t("timers.duration_required"),
+          message: t("timers.validation.required_duration"),
         });
         setError("hours", {
           type: "manual",
-          message: t("timers.duration_required"),
+          message: t("timers.validation.required_duration"),
         });
         setError("minutes", {
           type: "manual",
-          message: t("timers.duration_required"),
+          message: t("timers.validation.required_duration"),
         });
         return;
       }
@@ -86,6 +89,7 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
       const minutes_ms = data.minutes ? data.minutes * 60 * 1000 : 0;
 
       const duration = days_ms + hours_ms + minutes_ms;
+      const snooze_duration = data.snoozeDurationMinutes * 60 * 1000;
 
       if (timerId)
         removeTimerNotification(currentTimer!.notification_identifier!);
@@ -105,6 +109,7 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
         is_paused: false,
         paused_at: null,
         background_color: data.backgroundColor,
+        snooze_duration_ms: snooze_duration,
       };
 
       if (timerId) {
@@ -147,43 +152,78 @@ export const TimerForm = ({ timerId }: { timerId?: string }) => {
             />
           )}
         />
-        <View className="flex flex-row" style={{ gap: 8 }}>
-          <Controller
-            control={control}
-            name="days"
-            render={({ field: { value, onChange } }) => (
-              <RDTextInput
-                placeholder={t("app.day", { count: 2 })}
-                value={value?.toString()}
-                onChangeText={onChange}
-                keyboardType="numeric"
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="hours"
-            render={({ field: { value, onChange } }) => (
-              <RDTextInput
-                placeholder={t("app.hour", { count: 2 })}
-                value={value?.toString()}
-                onChangeText={onChange}
-                keyboardType="numeric"
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="minutes"
-            render={({ field: { value, onChange } }) => (
-              <RDTextInput
-                placeholder={t("app.minute", { count: 2 })}
-                value={value?.toString()}
-                onChangeText={onChange}
-                keyboardType="numeric"
-              />
-            )}
-          />
+
+        <View className="pt-2 flex flex-col" style={{ gap: 8 }}>
+          <RDText className="text-base">{t("timers.timer_duration")}</RDText>
+          <View className="flex flex-row" style={{ gap: 8 }}>
+            <Controller
+              control={control}
+              name="days"
+              render={({ field: { value, onChange }, fieldState }) => (
+                <RDTextInput
+                  placeholder={t("app.day", { count: 2 })}
+                  value={value?.toString()}
+                  onChangeText={onChange}
+                  keyboardType="numeric"
+                  className={cn(
+                    fieldState.error && "border-2 border-destructive",
+                  )}
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="hours"
+              render={({ field: { value, onChange }, fieldState }) => (
+                <RDTextInput
+                  placeholder={t("app.hour", { count: 2 })}
+                  value={value?.toString()}
+                  onChangeText={onChange}
+                  keyboardType="numeric"
+                  className={cn(
+                    fieldState.error && "border-2 border-destructive",
+                  )}
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="minutes"
+              render={({ field: { value, onChange }, fieldState }) => (
+                <RDTextInput
+                  placeholder={t("app.minute", { count: 2 })}
+                  value={value?.toString()}
+                  onChangeText={onChange}
+                  keyboardType="numeric"
+                  className={cn(
+                    fieldState.error && "border-2 border-destructive",
+                  )}
+                />
+              )}
+            />
+          </View>
+        </View>
+
+        <View className="pt-2 flex flex-col" style={{ gap: 8 }}>
+          <RDText className="text-base">{t("timers.snooze_duration")}</RDText>
+
+          <View className="flex flex-row">
+            <Controller
+              control={control}
+              name="snoozeDurationMinutes"
+              render={({ field: { value, onChange }, fieldState }) => (
+                <RDTextInput
+                  placeholder={t("app.minute", { count: 2 })}
+                  value={value?.toString()}
+                  onChangeText={onChange}
+                  keyboardType="numeric"
+                  className={cn(
+                    fieldState.error && "border-2 border-destructive",
+                  )}
+                />
+              )}
+            />
+          </View>
         </View>
 
         {Object.values(errors).length > 0 && (

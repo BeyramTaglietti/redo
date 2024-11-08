@@ -19,10 +19,21 @@
   "timers": {
     "create_timer": "Créer un Redo",
     "redo_title": "Titre du Redo",
-    "duration_required": "La durée est obligatoire",
+    "timer_duration": "Durée du minuteur",
     "notification": {
       "title": "Oh non ! 🚨",
       "description": "{{title}} est expiré !"
+    },
+    "snooze": "Répéter",
+    "snooze_duration": "Durée du bouton de répétition (minutes)",
+    "validation": {
+      "required_title": "Le titre est requis",
+      "required_duration": "La durée est requise",
+      "max_days": "Un maximum de {{days}} jours est autorisé",
+      "max_hours": "Un maximum de {{hours}} heures est autorisé",
+      "max_minutes": "Un maximum de {{minutes}} minutes est autorisé",
+      "min_snooze": "La durée de répétition doit être d'au moins {{minutes}} minutes",
+      "max_snooze": "La durée de répétition doit être d'au plus {{hours}} heures"
     }
   },
   "settings": {
