@@ -1,6 +1,12 @@
-import { AnalyticsEvents, useAnalytics } from "@/lib/hooks";
+import {
+  AnalyticsEvents,
+  PostPoneNotificationAction,
+  PostPoneNotificationActions,
+  useAnalytics,
+} from "@/lib/hooks";
 import { Timer, useTimersStore } from "@/lib/stores/timers";
 import { minutesToMilliseconds } from "date-fns";
+import { NotificationResponse } from "expo-notifications";
 import { useCallback, useEffect, useState } from "react";
 import { calculateSecondsLeft } from "../utils";
 import { useTimerNotifications } from "./useTimerNotifications";
@@ -63,8 +69,17 @@ export const useTimer: useTimerType = (timer) => {
     timer.paused_at,
   ]);
 
+  const handleNotificationResponse = (res: NotificationResponse) => {
+    if (res.notification.request.identifier === timer.notification_identifier) {
+      postPone(
+        PostPoneNotificationActions[
+          res.actionIdentifier as PostPoneNotificationAction
+        ].duration_minutes,
+      );
+    }
+  };
   const { createTimerNotification, removeTimerNotification } =
-    useTimerNotifications();
+    useTimerNotifications(handleNotificationResponse);
 
   const postPone = useCallback(
     async (snooze_duration_ms?: number) => {
@@ -81,10 +96,6 @@ export const useTimer: useTimerType = (timer) => {
           timerIsOver || !timer.updated_at
             ? new Date().valueOf() - timer.duration_ms
             : timer.updated_at;
-
-        console.log("updated", new Date(updatedAt));
-
-        console.log("snooze duration", snooze_duration_ms);
 
         updatedAt = updatedAt + minutesToMilliseconds(snooze_duration_ms);
       }

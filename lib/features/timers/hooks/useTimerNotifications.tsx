@@ -3,10 +3,15 @@ import * as Notifications from "expo-notifications";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 
-import { usePushNotification } from "@/lib/hooks";
-
-export const useTimerNotifications = () => {
-  const [schedulePushNotification] = usePushNotification();
+import { NotificationCategory, usePushNotifications } from "@/lib/hooks";
+export const useTimerNotifications = (
+  handleNotificationResponse?: (
+    res: Notifications.NotificationResponse,
+  ) => unknown,
+) => {
+  const [schedulePushNotification] = usePushNotifications(
+    handleNotificationResponse,
+  );
   const { t } = useTranslation();
 
   const createTimerNotification = useCallback(
@@ -18,6 +23,7 @@ export const useTimerNotifications = () => {
           type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
           seconds: millisecondsToSeconds(timerDurationMs),
         },
+        category: NotificationCategory.POSTPONE,
       });
 
       return identifier;

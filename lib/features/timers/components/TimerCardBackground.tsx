@@ -1,4 +1,4 @@
-import { memo, useEffect } from "react";
+import { Fragment, memo, useEffect } from "react";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -90,7 +90,7 @@ export const TimerCardBackground = memo(
     ]);
 
     return (
-      <>
+      <Fragment>
         <Animated.View
           className="absolute w-full h-full z-10 rounded-xl"
           style={slidingViewStyle}
@@ -99,7 +99,7 @@ export const TimerCardBackground = memo(
           className="absolute w-full h-full"
           style={backdropViewStyle}
         />
-      </>
+      </Fragment>
     );
   },
 );

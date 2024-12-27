@@ -48,7 +48,7 @@ export const Carousel = forwardRef<CarouselRef, CarouselProps>(
     }));
 
     return (
-      <>
+      <Fragment>
         <Animated.View
           className="w-full h-full flex flex-row"
           style={translateXAnimation}
@@ -57,7 +57,7 @@ export const Carousel = forwardRef<CarouselRef, CarouselProps>(
             return <Fragment key={index}>{screen}</Fragment>;
           })}
         </Animated.View>
-      </>
+      </Fragment>
     );
   },
 );

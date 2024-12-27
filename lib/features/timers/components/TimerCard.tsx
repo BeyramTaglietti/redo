@@ -121,7 +121,11 @@ export const TimerCard = ({
             >
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger asChild>
-                  <ActionButton label={t("timers.snooze")} />
+                  <View>
+                    {currentTimer.timeLeft <= 0 && (
+                      <ActionButton label={t("timers.snooze")} />
+                    )}
+                  </View>
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content>
                   {[5, 15, 30, 60].map((minutes, idx) => (

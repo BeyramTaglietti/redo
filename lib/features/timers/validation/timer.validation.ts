@@ -20,14 +20,6 @@ export const TimerFormSchema = z.object({
     })
     .optional(),
   backgroundColor: z.string(),
-  snoozeDurationMinutes: z.coerce
-    .number()
-    .min(5, {
-      message: i18n.t("timers.validation.min_snooze", { minutes: 5 }),
-    })
-    .max(1440, {
-      message: i18n.t("timers.validation.max_snooze", { hours: 24 }),
-    }),
 });
 
 export type TimerFormValues = z.infer<typeof TimerFormSchema>;
