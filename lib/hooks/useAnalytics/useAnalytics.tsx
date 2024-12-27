@@ -12,6 +12,8 @@ export const useAnalytics = () => {
         [key: string]: any;
       },
     ) => {
+      if (__DEV__) return; // disable analytics tracking during development
+
       posthog.capture(event, properties);
     },
     [posthog],
