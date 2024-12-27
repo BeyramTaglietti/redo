@@ -33,7 +33,6 @@ const initialState: State = {
       is_paused: false,
       paused_at: 0,
       background_color: tailwindColors.primary.DEFAULT,
-      snooze_duration_ms: 1000 * 60 * 5, // 5 minutes
     },
   ],
 };

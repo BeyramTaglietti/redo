@@ -1,3 +1,4 @@
+import { millisecondsToSeconds } from "date-fns";
 import * as Notifications from "expo-notifications";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
@@ -13,7 +14,10 @@ export const useTimerNotifications = () => {
       const identifier = await schedulePushNotification({
         title: t("timers.notification.title"),
         body: t("timers.notification.description", { title: timerTitle }),
-        trigger: { seconds: timerDurationMs / 1000 },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+          seconds: millisecondsToSeconds(timerDurationMs),
+        },
       });
 
       return identifier;

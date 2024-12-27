@@ -1,7 +1,6 @@
 import { Entypo } from "@expo/vector-icons";
 import * as Notifications from "expo-notifications";
-import { router } from "expo-router";
-import { ComponentProps, useEffect, useMemo, useState } from "react";
+import { ComponentProps, Fragment, useEffect, useMemo, useState } from "react";
 import {
   GestureResponderEvent,
   Platform,
@@ -20,9 +19,12 @@ import Animated, {
 import { TimerCardBackground } from "./TimerCardBackground";
 
 import { Deletable, RDText } from "@/lib/components";
+import * as DropdownMenu from "zeego/dropdown-menu";
+
 import { Timer } from "@/lib/stores/timers";
 import { HapticVibrate, cn, tailwindColors } from "@/lib/utils";
 import { BlurView } from "expo-blur";
+import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useTimer } from "../hooks";
 import { formatDurationFromMilliseconds } from "../utils";
@@ -80,7 +82,7 @@ export const TimerCard = ({
   }, [isDragging, draggedItemMargin]);
 
   if (currentTimer.timeLeft === null) {
-    return <></>;
+    return <Fragment></Fragment>;
   }
 
   return (
@@ -112,13 +114,35 @@ export const TimerCard = ({
             <View
               className="flex flex-row flex-1 justify-end items-end"
               style={{ gap: 16 }}
+              onStartShouldSetResponder={() => true}
+              onTouchEnd={(e) => {
+                e.stopPropagation();
+              }}
             >
-              {timer.snooze_duration_ms && (
-                <ActionButton
-                  onPress={() => currentTimer.postPone(true)}
-                  label={t("timers.snooze")}
-                />
-              )}
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger asChild>
+                  <ActionButton label={t("timers.snooze")} />
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content>
+                  {[5, 15, 30, 60].map((minutes, idx) => (
+                    <Fragment key={idx}>
+                      <DropdownMenu.Item
+                        key={`minutes_${idx}`}
+                        textValue={`${minutes} ${t("app.minute", { count: minutes })}`}
+                        onSelect={() => {
+                          currentTimer.postPone(minutes);
+                        }}
+                      >
+                        <DropdownMenu.ItemTitle>
+                          {minutes} {t("app.minute", { count: minutes })}
+                        </DropdownMenu.ItemTitle>
+                      </DropdownMenu.Item>
+                      <DropdownMenu.Separator />
+                    </Fragment>
+                  ))}
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
+
               {currentTimer.timeLeft > 0 && (
                 <ActionButton
                   iconName={
@@ -149,13 +173,13 @@ const ActionButton = ({
   label,
 }: {
   iconName?: ComponentProps<typeof Entypo>["name"];
-  onPress: () => void;
+  onPress?: () => void;
   label?: string;
 }) => {
   return (
     <BlurView
       className={cn(
-        "rounded-full h-12 w-12 flex justify-center items-center overflow-hidden",
+        "rounded-full h-12 w-12 overflow-hidden flex justify-center items-center",
         Platform.OS === "android" && "bg-black/40",
         label && "w-28",
       )}
@@ -163,17 +187,20 @@ const ActionButton = ({
     >
       <TouchableOpacity
         className="w-full h-full flex flex-row justify-center items-center"
+        activeOpacity={1}
         onPress={() => {
           HapticVibrate("Light");
-          onPress();
+          onPress?.();
         }}
       >
-        <Entypo
-          name={iconName}
-          size={24}
-          color={tailwindColors.primary.foreground}
-        />
-        <RDText className="text-base">{label}</RDText>
+        {iconName && (
+          <Entypo
+            name={iconName}
+            size={24}
+            color={tailwindColors.primary.foreground}
+          />
+        )}
+        {label && <RDText className="text-base">{label}</RDText>}
       </TouchableOpacity>
     </BlurView>
   );

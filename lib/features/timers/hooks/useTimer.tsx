@@ -1,11 +1,12 @@
 import { AnalyticsEvents, useAnalytics } from "@/lib/hooks";
 import { Timer, useTimersStore } from "@/lib/stores/timers";
+import { minutesToMilliseconds } from "date-fns";
 import { useCallback, useEffect, useState } from "react";
 import { calculateSecondsLeft } from "../utils";
 import { useTimerNotifications } from "./useTimerNotifications";
 
 type useTimerType = (timer: Timer) => {
-  postPone: (isSnoozeAction?: boolean) => Promise<void>;
+  postPone: (snooze_duration_ms?: number) => Promise<void>;
   remove: () => void;
   pause: () => void;
   resume: () => Promise<void>;
@@ -66,13 +67,13 @@ export const useTimer: useTimerType = (timer) => {
     useTimerNotifications();
 
   const postPone = useCallback(
-    async (isSnoozeAction = false) => {
+    async (snooze_duration_ms?: number) => {
       analytics.track(AnalyticsEvents.REDO_POSTPONED);
       removeTimerNotification(timer.notification_identifier);
 
       let updatedAt: number = new Date().valueOf();
 
-      if (isSnoozeAction && timer.snooze_duration_ms) {
+      if (snooze_duration_ms) {
         const timerIsOver =
           new Date().valueOf() - timer.duration_ms >= timer.updated_at;
 
@@ -81,7 +82,11 @@ export const useTimer: useTimerType = (timer) => {
             ? new Date().valueOf() - timer.duration_ms
             : timer.updated_at;
 
-        updatedAt = updatedAt + timer.snooze_duration_ms;
+        console.log("updated", new Date(updatedAt));
+
+        console.log("snooze duration", snooze_duration_ms);
+
+        updatedAt = updatedAt + minutesToMilliseconds(snooze_duration_ms);
       }
 
       const identifier = await createTimerNotification(
@@ -106,7 +111,6 @@ export const useTimer: useTimerType = (timer) => {
       timer.duration_ms,
       timer.id,
       timer.updated_at,
-      timer.snooze_duration_ms,
       createTimerNotification,
       postPoneTimer,
     ],
