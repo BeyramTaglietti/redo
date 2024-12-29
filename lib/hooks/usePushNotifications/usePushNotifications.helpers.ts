@@ -24,7 +24,7 @@ export async function registerForPushNotificationsAsync(): Promise<void> {
     finalStatus = status;
   }
   if (finalStatus !== "granted") {
-    alert("Failed to get push token for push notification!");
+    console.log("Failed to get push token for push notification!");
     return;
   }
 }

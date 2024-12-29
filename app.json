@@ -15,7 +15,7 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "buildNumber": "20241227",
+      "buildNumber": "20241229",
       "supportsTablet": true,
       "bundleIdentifier": "com.beyramtaglietti.redo",
       "splash": {
@@ -29,7 +29,7 @@
       }
     },
     "android": {
-      "versionCode": 20241227,
+      "versionCode": 20241229,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
